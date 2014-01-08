@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="./lib/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <script src="./lib/mocha.js"></script>
+        <script src="./lib/chai.js"></script>
+        <script>
+        var expect = chai.expect;
+
+        mocha.setup({
+            ui: 'bdd',
+            ignoreLeaks: true
+        });
+
+        onload = function () {
+            mocha.run();
+        };
+        </script>
+        <script src="http://telemetry.mozilla.org/v1/big.js"></script>
+        <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+        <script src="../js/devtools-telemetry.js"></script>
+        <script src="../js/versions.js"></script>
+        <script src="./lib/spec.js"></script>
+    </body>
+</html>
+
