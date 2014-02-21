@@ -1,0 +1,30 @@
+#colour-key {
+    margin-left: 50px;
+}
+
+#colour-key div {
+    width: 10%;
+    border: 1px #ababab solid;
+    padding: 2px 0 0 6px;
+    float: left;
+    margin: 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #efefef;
+}
+
+span.key {
+    height: 20px;
+}
+
+.aurora-28 {
+    background-color: rgba(220,220,220,0.5);
+}
+
+.nightly-29 {
+    background-color: rgba(110,110,110,0.5);
+}
+
+#output {
+    display: none;
+}
