@@ -1,49 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Chart test</title>
+  <meta charset="utf-8">
+  <title>Chart test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
 
-<canvas id="myChart" width="700" height="400"></canvas>
+<div id="container"><canvas id="myChart" width="700" height="400"></canvas></div>
 
-<script src="../js/jquery-1.10.2.min.js"></script>
-<script src="../bootstrap/js/bootstrap.min.js"></script>
-<script src="../js/promise/promise-3.2.0.js"></script>
-<script src="../js/underscore-min.js"></script>
-<script src="../js/chart.min.js"></script>
-<!-- <script src="../js/chart-defaults.js"></script> -->
-<script type="text/javascript">
+<!-- jQuery -->
+<script src="js/jquery-1.10.2.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- moar scripts -->
+<script src="js/underscore-min.js"></script>
+<script src="http://telemetry.mozilla.org/v1/big.js"></script>
+<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+<script src="js/promise-3.2.0.js"></script>
+<script src="js/async.js"></script>
+<script src="js/devtools-telemetry.js"></script>
+<script src="js/versions.js"></script>
+<script src="js/chart.min.js"></script>
+<script src="js/app.js"></script>
 
-var data = {
-  labels : ["January","February","March","April","May","June","July"],
-  datasets : [
-    {
-      fillColor : "rgba(220,220,220,0.5)",
-      strokeColor : "rgba(220,220,220,1)",
-      pointColor : "rgba(220,220,220,1)",
-      pointStrokeColor : "#fff",
-      data : [65,59,90,81,56,55,40]
-    },
-    {
-      fillColor : "rgba(151,187,205,0.5)",
-      strokeColor : "rgba(151,187,205,1)",
-      pointColor : "rgba(151,187,205,1)",
-      pointStrokeColor : "#fff",
-      data : [28,48,40,19,96,27,100]
-    }
-  ]
-};
-
-
+<script>
 $(function() {
   //Get context with jQuery - using jQuery's .get() method.
   var ctx = $("#myChart").get(0).getContext("2d");
   //This will get the first returned node in the jQuery collection.
   var lineChart = new Chart(ctx).Line(data);
 });
-
 </script>
 </body>
 </html> 

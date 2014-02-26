@@ -1,38 +1,8 @@
-// utility for concurrency
-var Pile = function() {
-   this.pile = [];
-   this.concurrency = 0;
-   this.done = null;
-   this.max_concurrency = 10;
-}
-
-Pile.prototype = {
-  add: function(callback) {
-   this.pile.push(callback);
-  },
-  run: function(done, max_concurrency) {
-      this.done = done || this.done;
-      this.max_concurrency = max_concurrency || this.max_concurrency;
-      var target = this.pile.length;
-      var that = this;
-      var next = function() {
-         that.concurrency--;
-         (--target == 0 ? that.done() : that.run());
-      };
-      while(this.concurrency < this.max_concurrency && this.pile.length > 0) {
-         this.concurrency++;
-         var callback = this.pile.shift();
-         callback(next);
-      }
-   }
-};
-
 /*
 * Questions I would want to ask of telemetry:
 *   opening of the toolbox over time in a given channel, eg join channels in a series
 *   compare data from beta vs release vs aurora vs nightly for a specific measure
 */
-
 var DevtoolsTelemetry = function(telemetryInstance) {
   var self = this;
   self.telemetryInstance = telemetryInstance;

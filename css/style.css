@@ -17,12 +17,12 @@ span.key {
     height: 20px;
 }
 
-.aurora-28 {
-    background-color: rgba(220,220,220,0.5);
+.aurora {
+    background-color: rgba(98, 100, 242, 0.5);
 }
 
-.nightly-29 {
-    background-color: rgba(110,110,110,0.5);
+.nightly {
+    background-color: rgba(81, 180, 93, 0.5);
 }
 
 #output {

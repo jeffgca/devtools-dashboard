@@ -1,10 +1,5 @@
 
 function formatDate(d) {
-
-  if (isNaN(d.getDate())) {
-    debugger;
-  }
-
   return d.getDate() + '/' + (d.getMonth() + 1) + '/' + (d.getYear() + 1900);
 }
 
@@ -44,7 +39,8 @@ function fetchChannel(targetVersions, channel, finish) {
           // console.log(_i, limit);
           if (_i === limit) {
             // sum up totals for each channels / tool combination
-            finish(totals);
+
+            finish(_.sortBy(totals, "label"));
           }
         });
       });
@@ -69,13 +65,11 @@ $(function() {
   _.each(channels, function(versions, channel) {
     fetchChannel(versions, channel, function(data) {
 
-      // create the chart data structure.
-      // debugger;
+
       if (chart_columns.length === 0) {
         chart_columns = _.map(data, function(item) {
           return item.label;
         });
-        console.log(chart_columns);
         chart_struct["labels"] = chart_columns;
       }
 
@@ -91,12 +85,8 @@ $(function() {
         return row.yes;
       });
 
-      var color = "rgba(110,110,110,0.5)";
-
-      if (channel === 'aurora') {
-        color = "rgba(220,220,220,0.5)"
-      }
-
+      var color = $('.'+channel).css('background-color');
+      
       chart_struct.datasets.push({
         fillColor: color,
         strokeColor: color,
