@@ -184,7 +184,7 @@ $(function() {
         element: document.querySelector("#chart"),
         width: 800,
         height: 250,
-        renderer: line,
+        renderer: 'line',
         series: sorted
       });
 
