@@ -1,19 +1,23 @@
-#colour-key {
+#keys {
+    margin-left: 80px;
+}
+
+.color-key {
     margin-left: 50px;
 }
 
-#colour-key div {
-    width: 10%;
+.color-key {
+    /*width: 10%;*/
     border: 1px #ababab solid;
-    padding: 2px 0 0 6px;
+    padding: 2px 8px 0 6px;
     float: left;
     margin: 4px;
     border-radius: 4px;
     font-weight: bold;
-    text-shadow: 1px 1px 2px #efefef;
+    text-shadow: 0px 0px 1px #fff;
 }
 
-span.key {
+.key {
     height: 20px;
 }
 
@@ -25,6 +29,33 @@ span.key {
     background-color: rgba(81, 180, 93, 0.5);
 }
 
-#output {
+.aurora-26 {
+    background-color: green;
+}
+
+.aurora-27 {
+    background-color: red;
+}
+
+.aurora-28 {
+    background-color: orange;
+}
+
+.aurora-29 {
+    background-color: pink;
+}
+
+#container2 {
     display: none;
 }
+
+pre {
+    width: 80%;
+    margin-left: 80px;
+    background-color: #efefef;
+    border: solid 1px #ababab;
+    font-family: monospace;
+    height: 300px;
+}
+
+

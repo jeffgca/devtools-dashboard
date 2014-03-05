@@ -16,26 +16,26 @@
 
 // $('#keys').html(keys);
 var versions = [26,27,28,29];
-var ctx = $("#time-chart").get(0).getContext("2d");
 
-function getToolboxUsageForChannel(devtools, channel, versions, color, callback) {
+var ranges = [{
+  start: 60,
+  end: Infinity,
+  desc: "More than 60 seconds"
+},
+{
+  start:1200,
+  end:Infinity,
+  desc: "More than 20 minutes"
+}];
+
+function getToolboxUsageForChannel(devtools, channel, versions, ranges, callback) {
   var _i = 0;
   var full_results = [];
 
   _.each(versions, function(_v, i) { // this isn't version data, it's time data
 
     var version = channel+'/'+_v;
-    // embedding the ranges definition here.
-    var ranges = [{
-      start: 60,
-      end: Infinity,
-      desc: "More than 60 seconds"
-    },
-    {
-      start:1200,
-      end:Infinity,
-      desc: "More than 20 minutes"
-    }];
+    // embedding the ranges definition here
 
     devtools.getBucketsForTool('DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS', version, ranges)
       .then(function(buckets) {
@@ -43,7 +43,7 @@ function getToolboxUsageForChannel(devtools, channel, versions, color, callback)
         if (buckets.results !== void 0) {
           full_results.push({
             channel: channel,
-            version: version,
+            version: _v,
             results: buckets.results
           });
         }
@@ -63,6 +63,7 @@ function getToolboxUsageForChannel(devtools, channel, versions, color, callback)
 
 
 $(function() {
+  $('#throbber').show();
   var dd = new DevtoolsTelemetry(Telemetry);
 
   var labels = _.map(versions, function(i) { return 'aurora/'+i; })
@@ -85,52 +86,130 @@ $(function() {
   var measure = 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS';
 
   dd.init().done(function() {
-    async.parallel([
-      function(cb) {
+    async.parallel({
+      'aurora': function(cb) {
         var channel = 'aurora';
-        getToolboxUsageForChannel(dd, channel, versions, 'red', function(err, result) {
+        getToolboxUsageForChannel(dd, channel, versions, ranges, function(err, result) {
           if (err) throw err;
           cb(null, result);
         });
       },
-      function(cb) {
+      'beta': function(cb) {
         var channel = 'beta';
-        getToolboxUsageForChannel(dd, channel, versions, 'yellow', function(err, result) {
+        getToolboxUsageForChannel(dd, channel, versions, ranges, function(err, result) {
           if (err) throw err;
           cb(null, result);
         });
       },
-      function(cb) {
+      'nightly': function(cb) {
         var channel = 'nightly';
-        getToolboxUsageForChannel(dd, channel, versions, 'green', function(err, result) {
+        getToolboxUsageForChannel(dd, channel, versions, ranges, function(err, result) {
           if (err) throw err;
           cb(null, result);
         });
       }
-    ], function(err, results) {
-
+    }, function(err, results) {
       if (err) throw err;
-      // console.log("got here!!!");
-      console.log(results);
+      console.log("got here!!!");
+      $('#throbber').hide();
 
-      // results[0] is the first in the range, results[1] is the second
+      /* so, 
 
+        For stacked bar chart ( http://code.shutterstock.com/rickshaw/guide/bar-2.html )
+        each 3 channels has 2 numbers and 4 versions, so six lines each with 4 points
 
-      _.each(results, function(channel) {
-        _.each(channel, function(version) {
-          
-        });
-      });      
+        x axis is number of hits, y axis is version number
 
-      // var datasaet = {
-      //   fillColor : 'rgba(0, 0, 0, 0)',
-      //   strokeColor : color,
-      //   pointColor : color,
-      //   pointStrokeColor : color,
-      //   data : []
-      // };
+      */
+
+      // step 1, create the series
+
+      // var map = _.map(results, function(channel, name) {
 
 
+      //   return name;
+      // });
+      var keys = _.keys(results);
+      // initialize lines
+      // var heavy_lines = _.object(keys, _.map(_.range(keys.length), function() { return []; }))
+      // var light_lines = _.object(keys, _.map(_.range(keys.length), function() { return []; }))
+      // debugger;
+      
+      var palette = new Rickshaw.Color.Palette();
+
+      var light_lines = {}, heavy_lines = {};
+
+      _.each(_.flatten(_.values(results)), function(v) {
+        if (!light_lines[v.channel]) {
+          light_lines[v.channel] = {
+            name: v.channel, 
+            color: palette.color(),
+            data: [{y: v.results[0], x: v.version}]
+          };  
+        }
+        else {
+          light_lines[v.channel].data.push({y: v.results[0], x: v.version})
+        }
+
+        if (!heavy_lines[v.channel]) {
+          heavy_lines[v.channel] = {
+            name: v.channel, 
+            color: palette.color(),
+            data: [{y: v.results[1], x: v.version}]
+          };          
+        }
+        else {
+          heavy_lines[v.channel].data.push({y: v.results[1], x: v.version});
+        }
+
+      });
+
+      var sorted = _.sortBy(_.values(light_lines), 'x');
+
+      // console.log(sorted);
+
+      // console.log(
+      //   JSON.stringify(sorted, null, '  ')
+      // );
+
+
+      // series data needs to be sorted on x values for series name: aurora
+      // console.log(heavy_lines);
+      // rickshaw code
+      // series data needs to be sorted on x values for series name: aurora
+      // series data needs to be sorted on x values for series name: aurora
+      // debugger;
+
+      var graph_light = new Rickshaw.Graph({
+        element: document.querySelector("#chart"),
+        width: 800,
+        height: 250,
+        renderer: line,
+        series: sorted
+      });
+
+      var y_ticks = new Rickshaw.Graph.Axis.Y( {
+        graph: graph_light,
+        orientation: 'left',
+        // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        element: document.getElementById('y_axis'),
+      });
+
+      var x_ticks = new Rickshaw.Graph.Axis.X( {
+        graph: graph_light,
+        orientation: 'bottom',
+        // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        tickFormat: function(y) { 
+          if (Math.round(y) === y) {
+            return y;
+          }
+          return '';
+        },
+        tickSize: '10',
+        element: document.getElementById('x_axis'),
+      });
+
+      graph_light.render();
     });
   });
 });

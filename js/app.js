@@ -86,7 +86,7 @@ $(function() {
       });
 
       var color = $('.'+channel).css('background-color');
-      
+
       chart_struct.datasets.push({
         fillColor: color,
         strokeColor: color,
