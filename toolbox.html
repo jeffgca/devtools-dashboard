@@ -6,51 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link rel="stylesheet" type="text/css" href="./css/graph.css">
 <link rel="stylesheet" type="text/css" href="./css/style.css">
-<style type="text/css">
-
-#chart_container {
-        display: inline-block;
-        font-family: Arial, Helvetica, sans-serif;
-}
-#chart {
-        float: left;
-        border: 2px solid #898989;
-        padding: 2px;
-        margin-left: 60px;
-}
-#legend {
-        float: left;
-        margin-left: 15px;
-}
-#offset_form {
-        float: left;
-        margin: 2em 0 0 15px;
-        font-size: 13px;
-}
-#y_axis {
-  position: absolute;
-  top: 76px;
-  bottom: 0;
-  width: 46px;
-  left: 16px;
-}
-</style>
 </head>
 <body>
 
 
-
+<h1>Measure: DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS</h1>
 <div id="container">
-  <h1>Measure: DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS</h1>
-  <!-- <div id="throbber"><h3>Loading <img height="20" width="20" src="media/throbber.gif"></h3></div> -->
-  <div id="chart_container">
-    <div id="chart"></div>
-    <!-- <div id="legend"></div> -->
-    <div id="y_axis"></div>
-    <div id="x_axis"></div>
-  </div>
 </div>
 
 <div id="container2">
@@ -65,51 +27,10 @@
 <script src="js/promise-3.2.0.js"></script>
 <script src="js/devtoolslib.js"></script>
 <script src="js/devtoolslib.js"></script>
-<script src="js/rickshaw/vendor/d3.min.js"></script>
-<script src="js/rickshaw/vendor/d3.layout.min.js"></script>
-<script src="js/rickshaw/rickshaw.min.js"></script>
 <script src="http://telemetry.mozilla.org/v1/big.js"></script>
 <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+<script src="/js/highcharts.js"></script>
 <script type="text/javascript" src="js/toolbox.js"></script>
-
-<script type="text/javascript">
-
-// var graph = new Rickshaw.Graph({
-//   element: document.getElementById("chart"),
-//   renderer: 'line',
-//   height: 300,
-//   width: 800,
-//   series: [
-//     {
-//       data: [ { x: 0, y: 120 }, { x: 1, y: 890 }, { x: 2, y: 38 }, { x: 3, y: 70 }, { x: 4, y: 32 } ],
-//       color: "#c05020"
-//     }, {
-//       data: [ { x: 0, y: 80 }, { x: 1, y: 200 }, { x: 2, y: 100 }, { x: 3, y: 520 }, { x: 4, y: 133 } ],
-//       color: "#30c020"
-//     }, {
-//       data: [ { x: 0, y: 200 }, { x: 1, y: 390 }, { x: 2, y: 1000 }, { x: 3, y: 200 }, { x: 4, y: 230 } ],
-//       color: "#6060c0"
-//     }
-//   ]
-// });
-
-// var y_ticks = new Rickshaw.Graph.Axis.Y( {
-//   graph: graph,
-//   orientation: 'left',
-//   // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-//   element: document.getElementById('y_axis'),
-// });
-
-// var x_ticks = new Rickshaw.Graph.Axis.X( {
-//   graph: graph,
-//   orientation: 'bottom',
-//   // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-//   element: document.getElementById('x_axis'),
-// });
-
-// graph.render();
-
-</script>
 
 </body>
 </html>

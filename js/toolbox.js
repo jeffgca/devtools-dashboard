@@ -15,7 +15,9 @@
 // var keys = _.template(key_tpl, {versions: versions})+'</tr>';
 
 // $('#keys').html(keys);
-var versions = [26,27,28,29];
+var versions = [27,28,29,30];
+
+var gResults;
 
 var ranges = [{
   start: 60,
@@ -61,6 +63,64 @@ function getToolboxUsageForChannel(devtools, channel, versions, ranges, callback
 }
 
 
+function renderHighChartBars(results) {
+
+  results = _.sortBy(results, 'version');
+
+  var series = [],
+      categories = [],
+      channels = [];
+
+  // categories = _.uniq(_.pluck(results, 'version'));
+
+  categories = _.map(results, function(r) {
+    return r.channel+' '+r.version;
+  });
+  var channels = _.uniq(_.pluck(results, 'channel'));
+  var datasets = [[], []];
+
+  _.each(results, function(item) {
+    datasets[0].push(item.results[0]);
+    datasets[1].push(item.results[1]);
+  });
+
+  // channels = _.map(series, function(s) { return s.name; });
+
+  _.each(_.range(2), function(i) {
+    series.push({
+      name: (i === 0) ? "More than 1 Minute" : "More than 1 hour",
+      data: datasets[i]
+    });
+  });
+
+  $('#container').highcharts({
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'
+      },
+      yAxis: {
+        'title': {
+          'text': 'Users per Build'
+        }
+      },
+      xAxis: {
+        // categories: ["More than 1 Minute", "More than 60 minutes"]
+        categories: categories
+      },
+      labels: {
+        rotation: -45,
+        align: 'right',
+        style: {
+          fontSize: '13px',
+          fontFamily: 'Verdana, sans-serif'
+        }
+      },
+      series: series
+  });
+}
+
 
 $(function() {
   $('#throbber').show();
@@ -94,13 +154,6 @@ $(function() {
           cb(null, result);
         });
       },
-      'beta': function(cb) {
-        var channel = 'beta';
-        getToolboxUsageForChannel(dd, channel, versions, ranges, function(err, result) {
-          if (err) throw err;
-          cb(null, result);
-        });
-      },
       'nightly': function(cb) {
         var channel = 'nightly';
         getToolboxUsageForChannel(dd, channel, versions, ranges, function(err, result) {
@@ -113,103 +166,11 @@ $(function() {
       console.log("got here!!!");
       $('#throbber').hide();
 
-      /* so, 
+      gResults = results = _.flatten(_.values(results));
 
-        For stacked bar chart ( http://code.shutterstock.com/rickshaw/guide/bar-2.html )
-        each 3 channels has 2 numbers and 4 versions, so six lines each with 4 points
+      // highcharts implementation
+      renderHighChartBars(results);
 
-        x axis is number of hits, y axis is version number
-
-      */
-
-      // step 1, create the series
-
-      // var map = _.map(results, function(channel, name) {
-
-
-      //   return name;
-      // });
-      var keys = _.keys(results);
-      // initialize lines
-      // var heavy_lines = _.object(keys, _.map(_.range(keys.length), function() { return []; }))
-      // var light_lines = _.object(keys, _.map(_.range(keys.length), function() { return []; }))
-      // debugger;
-      
-      var palette = new Rickshaw.Color.Palette();
-
-      var light_lines = {}, heavy_lines = {};
-
-      _.each(_.flatten(_.values(results)), function(v) {
-        if (!light_lines[v.channel]) {
-          light_lines[v.channel] = {
-            name: v.channel, 
-            color: palette.color(),
-            data: [{y: v.results[0], x: v.version}]
-          };  
-        }
-        else {
-          light_lines[v.channel].data.push({y: v.results[0], x: v.version})
-        }
-
-        if (!heavy_lines[v.channel]) {
-          heavy_lines[v.channel] = {
-            name: v.channel, 
-            color: palette.color(),
-            data: [{y: v.results[1], x: v.version}]
-          };          
-        }
-        else {
-          heavy_lines[v.channel].data.push({y: v.results[1], x: v.version});
-        }
-
-      });
-
-      var sorted = _.sortBy(_.values(light_lines), 'x');
-
-      // console.log(sorted);
-
-      // console.log(
-      //   JSON.stringify(sorted, null, '  ')
-      // );
-
-
-      // series data needs to be sorted on x values for series name: aurora
-      // console.log(heavy_lines);
-      // rickshaw code
-      // series data needs to be sorted on x values for series name: aurora
-      // series data needs to be sorted on x values for series name: aurora
-      // debugger;
-
-      var graph_light = new Rickshaw.Graph({
-        element: document.querySelector("#chart"),
-        width: 800,
-        height: 250,
-        renderer: 'line',
-        series: sorted
-      });
-
-      var y_ticks = new Rickshaw.Graph.Axis.Y( {
-        graph: graph_light,
-        orientation: 'left',
-        // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-        element: document.getElementById('y_axis'),
-      });
-
-      var x_ticks = new Rickshaw.Graph.Axis.X( {
-        graph: graph_light,
-        orientation: 'bottom',
-        // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-        tickFormat: function(y) { 
-          if (Math.round(y) === y) {
-            return y;
-          }
-          return '';
-        },
-        tickSize: '10',
-        element: document.getElementById('x_axis'),
-      });
-
-      graph_light.render();
     });
   });
 });
