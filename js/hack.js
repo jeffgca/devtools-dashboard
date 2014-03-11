@@ -124,6 +124,7 @@ want this data structure instead:
 var render = function(xTitle, yTitle, data) {
 
   // debugger;
+
   console.log(data);
 
   var series = [];
@@ -167,6 +168,8 @@ var render = function(xTitle, yTitle, data) {
       series: series
   });
 
+  $('#container').show();
+
 }
 
 var OFFLINE = false;
@@ -190,6 +193,7 @@ var currentTool;
 var fetcher = function(tool) {
 
   $('#measure').html('Selected: '+tool);
+  $('#container').hide().html("Loading...").show();
 
   if (OFFLINE) {
 
