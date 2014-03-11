@@ -121,6 +121,7 @@ function renderHighChartBars(results) {
   });
 }
 
+var pp = function(o) { return JSON.stringify(o,null,'  ')};
 
 $(function() {
   $('#throbber').show();
@@ -146,6 +147,8 @@ $(function() {
   var measure = 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS';
 
   dd.init().done(function() {
+    // debugger;
+
     async.parallel({
       'aurora': function(cb) {
         var channel = 'aurora';
@@ -166,7 +169,12 @@ $(function() {
       console.log("got here!!!");
       $('#throbber').hide();
 
-      gResults = results = _.flatten(_.values(results));
+      results = _.flatten(_.values(results));
+
+      // sum things up in sequences
+      // _.each(results, function(r) {
+
+      // });
 
       // highcharts implementation
       renderHighChartBars(results);
