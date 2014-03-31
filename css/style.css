@@ -62,4 +62,14 @@ pre {
     margin: 0 0px 20px 80px;
 }
 
-
+#loader {
+    position: relative;
+    overflow: hidden;
+    width: 940px;
+    height: 400px;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    left: 0.5px;
+    top: 0px;
+}

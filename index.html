@@ -1,58 +1,80 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Developer Tools Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" type="text/css" href="./css/style.css">
-  </head>
-  <body>
-<div class="container">
-  
-<!--   <div><label>Channel:</label> Aurora</div>
-  <div><label>Versions:</label> 26, 27, 28, 29</div> -->
+<head>
+<meta charset="utf-8">
+<title>Toolbox Activity over time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
 
 
+<!-- <div id="controls"><h1 id="measure">Measure: </h1>
+<form id="tool-selector" action="" method="POST" class="form-inline" role="form">
 
-<!--   <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Data</th>
-      </tr>
-      <tr>
-        <th>More</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table> -->
-
-  <div id="keys" class="key">
-    <span class="color-key aurora">Aurora 28</span>
-    <span class="color-key nightly">Nightly 29</span>
+  <div class="form-group">
+    <label class="sr-only" for="">label</label>
+    <select id="measure-select" class="form-control" required="required">
+      <option selected value="Toolbox">Toolbox</option>
+      <option value="Inspector">Inspector</option>
+      <option value="Web Console">Web Console</option>
+    </select>
   </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form></div> -->
+<div class="container">
+  <h1>Toolbox usage over time</h1>
+  <h3>Firefox Developer Tools</h3>
 
-  <canvas id="data-chart" width="1100" height="600"></canvas>
-<!--   <pre id="release"></pre>
-  <pre id="beta"></pre> -->
-  <pre id="output"></pre>
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <button id="reload-btn" type="button" class="btn btn-default">Reload</button>
+    </div>
+  </div>
+  <!-- <div id="loader"><img src="./media/throbber.gif"></div> -->
+  <div id="loader"><h3>Loading...</h3></div>
+  <div id="graph-container"></div>
 
+  <h3>What is this?</h3>
+  <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:
+    <ul>
+      <li>Number of sessions with more than 5 minutes of use.</li>
+      <li>Number of sessions with more than 30 minutes of use.</li>
+    </ul>
+  </p>
+  <h3>What this tells us:</h3>
+  <p>We should see an indicator for overall devtools usage over time, hopefully (and apparently) increasing over time.</p>
+  <p>Some caveats:
+    <ul>
+      <li>The tuning of these numbers (time open per session) to the two ranges is based on some assumptions: 
+        <ul>
+          <li>If the toolbox is opened for more than 5 minutes, it likely wasn't opened accidentally.</li>
+          <li>If the toolbox is opened for more than 30 minutes, the user is a web developer using our tools for serious work.</li>
+        </ul>
+      </li>
+      <li>The number of <em>sessions</em> does not directly correlate to the number of <em>users</em>.</li>
+      <li>As Telemetry data collection is only on by default for the Aurora and Nightly channels, only Aurora and Nightly data is included and totaled here.</li>
+      <li>Beta and Release data is not used because it a) can involve very large numbers of reports, and b) is very inconsistent, for example compare <a target="_blank" href="http://telemetry.mozilla.org/#release/26/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Release data</a> with <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Aurora data</a> for the same measure.</li>
+      <li>I've noticed that Telemetry data hosted on S3 is sometimes sketchy, so <a target="_blank" href="http://note.io/1hp1CJ4">here is a screenshot</a> of what this graph typically looks like.</li>
+    </ul>
+  </p>
+  <p>Based on Mozilla's <a target="_blank" href="http://telemetry.mozilla.org/docs.html">Telemetry open data service</a>.</p>
 </div>
-    <!-- jQuery -->
-    <script src="js/jquery-1.10.2.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <!-- moar scripts -->
-    <script src="js/underscore-min.js"></script>
-    <script src="http://telemetry.mozilla.org/v1/big.js"></script>
-    <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
-    <script src="js/promise-3.2.0.js"></script>
-    <script src="js/async.js"></script>
-    <script src="js/devtools-telemetry.js"></script>
-    <script src="js/versions.js"></script>
-    <script src="js/chart.min.js"></script>
-    <script src="js/app.js"></script>
-    
-  </body>
+
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="http://underscorejs.org/underscore.js"></script>
+<!-- <script src="js/underscore-min.js"></script> -->
+<script src="js/async.js"></script>
+<script src="js/promise-3.2.0.js"></script>
+<script src="js/devtoolslib.js"></script>
+<script src="http://telemetry.mozilla.org/v1/big.js"></script>
+<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/moment-with-langs.min.js"></script>
+<script src="js/moment-range.js"></script>
+<script src="js/hack.js"></script>
+</body>
 </html>

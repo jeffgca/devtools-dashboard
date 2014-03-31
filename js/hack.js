@@ -27,15 +27,27 @@ function generateBuildWindows(startNightly, endNightly) {
 var start = 24, end = 30;
 
 
+// var ranges = [{
+//     start: 60,
+//     end: Infinity,
+//     desc: "More than 60 seconds"
+//   },
+//   {
+//     start:1200,
+//     end:Infinity,
+//     desc: "More than 20 minutes"
+//   }
+// ];
+
 var ranges = [{
-    start: 60,
+    start: 300,
     end: Infinity,
-    desc: "More than 60 seconds"
+    desc: "More than 5 minutes"
   },
   {
-    start:1200,
+    start:1800,
     end:Infinity,
-    desc: "More than 20 minutes"
+    desc: "More than 30 minutes"
   }
 ];
 
@@ -48,12 +60,6 @@ var pp = function(o) { return JSON.stringify(o)};
 */
 
 var createWeeklyMap = function(results, callback) {
-  // console.log(pp(results)); need to do this with less data
-  // debugger;
-  console.log("in final");
-  console.log(results);
-
-  // $('#output').html(pp(results));
 
   var map = {};
   var map2 = _.object(_.pluck(ranges, 'desc'), [{}, {}]);
@@ -67,33 +73,6 @@ var createWeeklyMap = function(results, callback) {
       var _weeks = _m.weeks();
 
       var strDate = _m.clone().startOf('week').format('MM/DD/YYYY');
-      // console.log(date, _year, _weeks);
-
-/* 
-
-
-want this data structure instead:
-
-{
-  'more than a minute': [
-    {
-      week: "mm/dd/YYY (date of week start)",
-      count: %i,
-      _intWeek: %d (number of weeks into the year)
-    },
-    ..
-  ],
-  'more than an hour': [
-    {
-      week: "mm/dd/YYY (date of week start)",
-      count: %i,
-      _intWeek: %d (number of weeks into the year)
-    },
-    ....
-  ]
-}
-
- */      
 
       _.each(ranges, function(r) {
         _.each(counts, function(count) {
@@ -118,17 +97,11 @@ want this data structure instead:
     });
   });
 
-  callback('Something', 'Else', map2);
+  callback('Weeks', 'Sessions', map2);
 };
 
 var render = function(xTitle, yTitle, data) {
-
-  // debugger;
-
-  console.log(data);
-
   var series = [];
-
   var columns = _.keys(_.values(data)[0]);
 
   _.each(data, function(weeks, label) {
@@ -141,7 +114,7 @@ var render = function(xTitle, yTitle, data) {
     })
   });
 
-  $('#container').highcharts({
+  $('#graph-container').highcharts({
       chart: {
           type: 'line'
       },
@@ -167,75 +140,39 @@ var render = function(xTitle, yTitle, data) {
       },
       series: series
   });
-
-  $('#container').show();
-
+  $('#loader').hide();
+  $('#graph-container').show();
 }
-
-var OFFLINE = false;
 // var OFFLINE = true;// load from local json
 
-function handleSelect(ev) {
-  ev.preventDefault();
-  currentTool = $('#measure-select').val();
-  // console.log($('#measure-select').val());
-  fetcher(currentTool);
-}
-
-var toolsPaths = {
-  "Inspector": 'inspector.json',
-  "Web Console": 'webconsole-1.json',
-  "Toolbox": 'toolbox.json',
-}
-
-var currentTool;
-
 var fetcher = function(tool) {
+  $('#graph-container').html("");
+  $('#loader').show();
 
-  $('#measure').html('Selected: '+tool);
-  $('#container').hide().html("Loading...").show();
+  var dd = new DevtoolsTelemetry(Telemetry);
+  // get a list of ranges for weekly buckets
+  var weeks_end = moment(), weeks_start = moment('2013-05-14'), full_range = moment().range(start, end);
+  var currentWeek = weeks_end.weeks();
+  var currentYear = weeks_end.year();
+  var windows = generateBuildWindows(start, end);
 
-  if (OFFLINE) {
+  var promise = dd.init();
 
-    var path;
-    if (toolsPaths[tool]) {
-      var url ='http://localhost:8080/mock/'+toolsPaths[tool];  
-    }
-    else {
-      throw "Invalid tool: "+tool+", should be one of "+_.values(toolsPaths).join(', ');
-    }
-
-    $.getJSON(url, function(json) {
-      createWeeklyMap(json, render);
-    }); 
-  }
-  else {
-    var dd = new DevtoolsTelemetry(Telemetry);
-    // get a list of ranges for weekly buckets
-    var weeks_end = moment(), weeks_start = moment('2013-05-14'), full_range = moment().range(start, end);
-    var currentWeek = weeks_end.weeks();
-    var currentYear = weeks_end.year();
-    var windows = generateBuildWindows(start, end);
-
-    debugger;
-
-    dd.init().done(function() {
-      // dd.getWeeklyToolUsage(windows, 'Web Console', createWeeklyMap);
-      dd.getWeeklyToolUsage(windows, tool).done(function(results) {
-        debugger;
-        createWeeklyMap(results, render);
-      });
+  promise.then(function() {
+    dd.getWeeklyToolUsage(windows, tool).done(function(results) {
+      createWeeklyMap(results, render);
+      // render('Weeks', 'Sessions', results);
     });
-  }
+  });
 }
 
 $(function() {
+  $('#reload-btn').click(function(ev) {
+    ev.preventDefault();
+    $('#loader').show();
+    $('#graph-container').html("");
+    fetcher('Toolbox');
+  });
 
-  // bindings 
-  $('#tool-selector').submit(handleSelect);
-  var dropList = $('#measure-select');
-  dropList.change(handleSelect);
-
-  // fetch based on the current  value
-  fetcher(dropList.val());
+  fetcher('Toolbox');
 });

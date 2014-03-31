@@ -284,10 +284,13 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
     // loop through the windows
     var _i = 0;
+    console.dir(windows);
     var limit = _.size(windows);
+
     return new Promise(function(resolve, reject) {
       _.each(windows, function(win) {
         // debugger;
+        _i++;
         _.each(win, function(version, channel) {
           // get some data
           // console.log(version, channel);
@@ -297,14 +300,12 @@ var DevtoolsTelemetry = function(telemetryInstance) {
               collected[m] = {};
             }
             self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
-              _i++;
               evolution.each(function (date, histogram, index) {
                 var _strDate = formatDate(date);
                 if (!collected[m][_strDate]) {
                   collected[m][_strDate] = [];
                 }
                 histogram.each(function(count, start, end, index) {
-                  // console.log("got %d between %d and %d on %s", count, start, end, date.toString());
                   collected[m][_strDate].push({
                     count: count,
                     start: start,
@@ -314,8 +315,9 @@ var DevtoolsTelemetry = function(telemetryInstance) {
                   });
                 });
               });
+
               if (_i === limit) {
-                console.log('finished '+m, version);
+                console.dir(collected);
                 resolve(collected);
               }
             });
@@ -323,5 +325,5 @@ var DevtoolsTelemetry = function(telemetryInstance) {
         });
       });
     });
-  }
+  };
 };
