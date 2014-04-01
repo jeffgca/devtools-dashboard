@@ -73,3 +73,11 @@ pre {
     left: 0.5px;
     top: 0px;
 }
+
+#graph-container {
+    padding-top: 20px;
+}
+
+#about-container {
+    padding-top: 12px;
+}

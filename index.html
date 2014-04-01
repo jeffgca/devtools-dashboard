@@ -10,21 +10,20 @@
 </head>
 <body>
 
-
-<!-- <div id="controls"><h1 id="measure">Measure: </h1>
-<form id="tool-selector" action="" method="POST" class="form-inline" role="form">
-
-  <div class="form-group">
-    <label class="sr-only" for="">label</label>
-    <select id="measure-select" class="form-control" required="required">
-      <option selected value="Toolbox">Toolbox</option>
-      <option value="Inspector">Inspector</option>
-      <option value="Web Console">Web Console</option>
-    </select>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form></div> -->
 <div class="container">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="./">Home</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        Other Graphs <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="./">Weekly Toolbox usage</a></li>
+        <li><a href="./tools-relative.html">Compare tool usage</a></li>
+      </ul>
+    </li>
+  </ul>
+
   <h1>Toolbox usage over time</h1>
   <h3>Firefox Developer Tools</h3>
 
@@ -37,31 +36,35 @@
   <div id="loader"><h3>Loading...</h3></div>
   <div id="graph-container"></div>
 
-  <h3>What is this?</h3>
-  <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:
-    <ul>
-      <li>Number of sessions with more than 5 minutes of use.</li>
-      <li>Number of sessions with more than 30 minutes of use.</li>
-    </ul>
-  </p>
-  <h3>What this tells us:</h3>
-  <p>We should see an indicator for overall devtools usage over time, hopefully (and apparently) increasing over time.</p>
-  <p>Some caveats:
-    <ul>
-      <li>The tuning of these numbers (time open per session) to the two ranges is based on some assumptions: 
-        <ul>
-          <li>If the toolbox is opened for more than 5 minutes, it likely wasn't opened accidentally.</li>
-          <li>If the toolbox is opened for more than 30 minutes, the user is a web developer using our tools for serious work.</li>
-        </ul>
-      </li>
-      <li>The number of <em>sessions</em> does not directly correlate to the number of <em>users</em>.</li>
-      <li>As Telemetry data collection is only on by default for the Aurora and Nightly channels, only Aurora and Nightly data is included and totaled here.</li>
-      <li>Beta and Release data is not used because it a) can involve very large numbers of reports, and b) is very inconsistent, for example compare <a target="_blank" href="http://telemetry.mozilla.org/#release/26/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Release data</a> with <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Aurora data</a> for the same measure.</li>
-      <li>I've noticed that Telemetry data hosted on S3 is sometimes sketchy, so <a target="_blank" href="http://note.io/1hp1CJ4">here is a screenshot</a> of what this graph typically looks like.</li>
-    </ul>
-  </p>
+  <div id="about-container">
+    <h3>What is this?</h3>
+    <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:
+      <ul>
+        <li>Number of sessions with more than 5 minutes of use.</li>
+        <li>Number of sessions with more than 30 minutes of use.</li>
+      </ul>
+    </p>
+    <h3>What this tells us:</h3>
+    <p>We should see an indicator for overall devtools usage over time, hopefully (and apparently) increasing over time.</p>
+    <p>Some caveats:
+      <ul>
+        <li>The tuning of these numbers (time open per session) to the two ranges is based on some assumptions: 
+          <ul>
+            <li>If the toolbox is opened for more than 5 minutes, it likely wasn't opened accidentally.</li>
+            <li>If the toolbox is opened for more than 30 minutes, the user is a web developer using our tools for serious work.</li>
+          </ul>
+        </li>
+        <li>The number of <em>sessions</em> does not directly correlate to the number of <em>users</em>.</li>
+        <li>As Telemetry data collection is only on by default for the Aurora and Nightly channels, only Aurora and Nightly data is included and totaled here.</li>
+        <li>Beta and Release data is not used because it a) can involve very large numbers of reports, and b) is very inconsistent, for example compare <a target="_blank" href="http://telemetry.mozilla.org/#release/26/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Release data</a> with <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Aurora data</a> for the same measure.</li>
+        <li>I've noticed that Telemetry data hosted on S3 is sometimes sketchy, so <a target="_blank" href="http://note.io/1hp1CJ4">here is a screenshot</a> of what this graph typically looks like.</li>
+      </ul>
+    </p>
+  </div>
   <p>Based on Mozilla's <a target="_blank" href="http://telemetry.mozilla.org/docs.html">Telemetry open data service</a>.</p>
 </div>
+
+<a href="https://github.com/canuckistani/devtools-dashboard"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>

@@ -167,6 +167,12 @@ var fetcher = function(tool) {
 }
 
 $(function() {
+
+  $('#about-toggle').click(function(e) {
+    e.preventDefault();
+    $('#about-container').toggle();
+  });
+
   $('#reload-btn').click(function(ev) {
     ev.preventDefault();
     $('#loader').show();

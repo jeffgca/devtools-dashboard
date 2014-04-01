@@ -49,9 +49,15 @@ function fetchChannel(targetVersions, channel, finish) {
 }
 
 $(function() {
+
+  $('#about-toggle').click(function(e) {
+    e.preventDefault();
+    $('#about-container').toggle();
+  });
+
   var channels = {
-    'aurora'  : [28],
-    'nightly'  : [29],
+    'aurora'  : [29],
+    'nightly'  : [30],
   };
 
   var chart_struct = {
@@ -75,11 +81,11 @@ $(function() {
 
       var _str_columns = _.keys(data[0]).join(',')+"\n";
 
-      var _str_data = _.map(data, function(row) {
-        return _.values(row).join(',');
-      }).join("\n");
+      // var _str_data = _.map(data, function(row) {
+      //   return _.values(row).join(',');
+      // }).join("\n");
 
-      $('pre#output').append(_str_columns+_str_data+"\n");
+      // $('pre#output').append(_str_columns+_str_data+"\n");
 
       chart_data = _.map(data, function(row) {
         return row.yes;
