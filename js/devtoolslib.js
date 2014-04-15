@@ -16,32 +16,26 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   self.DevtoolsModel = {};
   self.versions = false;
 
-  self.init = function() {
-    return new Promise(function(resolve, reject) {
-      self.telemetryInstance.init(function() {
-        self.versions = self.telemetryInstance.versions();
-        resolve(true);
-      });
+  self.init = function(callback) {
+    self.telemetryInstance.init(function() {
+      self.versions = self.telemetryInstance.versions();
+      callback(true);
     });
   };
 
-  self.getProbes = function(version) {
+  self.getProbes = function(version, callback) {
     var devtools_measures = [];
-    return new Promise(function(resolve, reject) {
-      self.telemetryInstance.measures(version, function(measures) {
-        var probe_names = Object.keys(measures);
-        var devtools_keys = probe_names.filter(function(name) {
-          return (name.indexOf('DEVTOOLS_') !== -1);
-        });
-        var out = {};
-        devtools_keys.forEach(function(key) {
-          out[key] = measures[key];
-        });
-
-        self.DevtoolsMeasures = out;
-
-        resolve(out);
+    self.telemetryInstance.measures(version, function(measures) {
+      var probe_names = Object.keys(measures);
+      var devtools_keys = probe_names.filter(function(name) {
+        return (name.indexOf('DEVTOOLS_') !== -1);
       });
+      var out = {};
+      devtools_keys.forEach(function(key) {
+        out[key] = measures[key];
+      });
+      self.DevtoolsMeasures = out;
+      callback(out);
     });
   };
 
@@ -49,10 +43,8 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   self.map = { devtools: {} };
 
   // generate a model of the tools measures
-  self.generateModel = function(version) {
+  self.generateModel = function(version, callback) {
     self.telemetryInstance.measures(version, function(measures) {
-
-      debugger;
       var probe_names = Object.keys(measures);
 
       var devtools_keys = probe_names.filter(function(name) {
@@ -67,22 +59,10 @@ var DevtoolsTelemetry = function(telemetryInstance) {
         if (!self.map.devtools[tool]) {
           self.map.devtools[tool] = [];
         }
-        measure['name'] = name;        
+        measure.name = name;
         self.map.devtools[tool].push(measure);
       });
-
-      // _.each(_measures, function(measure, name) {
-      //   var parts = name.split('_', 2); var tool = parts[1];
-      //   if (!self.map.devtools[tool]) {
-      //     self.map.devtools[tool] = [];
-      //   }
-      //   measure['name'] = name;
-      //   self.map.devtools[tool].push(measure);
-      // });
-
-      return new Promise(function(resolve, reject) {
-        resolve(self.map);
-      });
+      callback(self.map);
     });
   };
 
@@ -93,51 +73,46 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     nightly: "30"
   };
 
-  self.getMeasuresByChannel = function(measureName, channel, versions) {
+  self.getMeasuresByChannel = function(measureName, channel, versions, callback) {
     var length = versions.length, results = [], count = 0;
+    _.each(versions, function(item) {
+      var target = channel+'/'+item;
 
-    return new Promise(function(resolve, reject) {
-      _.each(versions, function(item) {
-        var target = channel+'/'+item;
-
-        self.telemetryInstance.loadEvolutionOverBuilds(target,
-          measureName,
-          function(histogram) {
-            count++;
-            results.push(histogram);
-            if (count === length) {
-              resolve(result);
-            }
-        });
+      self.telemetryInstance.loadEvolutionOverBuilds(target,
+        measureName,
+        function(histogram) {
+          count++;
+          results.push(histogram);
+          if (count === length) {
+            callback(result);
+          }
       });
     });
   };
 
   self.getUsageGraph = function(version, name) {
-    return new Promise(function(resolve, reject) {
-      self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
-        var results = {
-          yes: 0,
-          no: 0,
-          total: 0
-        };
-        var _i = 0;
-        evolution.each(function(date, histogram, index) {
-          _i++;
+    self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
+      var results = {
+        yes: 0,
+        no: 0,
+        total: 0
+      };
+      var _i = 0;
+      evolution.each(function(date, histogram, index) {
+        _i++;
 
-          histogram.each(function(count, start, end, index) {
-            if (index === 0) {
-              results.no += count;
-              results.total += (count)
-            }
-            else if(index === 1) {
-              results.yes += count
-              results.total += (count)
-            }
-          });
+        histogram.each(function(count, start, end, index) {
+          if (index === 0) {
+            results.no += count;
+            results.total += (count);
+          }
+          else if(index === 1) {
+            results.yes += count;
+            results.total += (count);
+          }
         });
-        resolve(results);
       });
+      callback(results);
     });
   };
 
@@ -204,82 +179,80 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       'time': 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'
     },
     'Inspector': {
-      'flag': 'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_INSPECTOR_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_INSPECTOR_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_INSPECTOR_OPENED_BOOLEAN'
     },
     'Web Console': {
-      'flag': 'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_WEBCONSOLE_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_WEBCONSOLE_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_WEBCONSOLE_OPENED_BOOLEAN'
     },
     'Net Monitor': {
-      'flag': 'DEVTOOLS_NETMONITOR_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_NETMONITOR_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_NETMONITOR_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_NETMONITOR_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_NETMONITOR_OPENED_BOOLEAN'
     },
     'Responsive Design': {
-      'flag': 'DEVTOOLS_RESPONSIVE_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_RESPONSIVE_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_RESPONSIVE_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_RESPONSIVE_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_RESPONSIVE_OPENED_BOOLEAN'
     },
     'Style Editor': {
-      'flag': 'DEVTOOLS_STYLEEDITOR_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_STYLEEDITOR_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_STYLEEDITOR_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_STYLEEDITOR_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_STYLEEDITOR_OPENED_BOOLEAN'
     },
     'Debugger': {
-      'flag': 'DEVTOOLS_JSDEBUGGER_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_JSDEBUGGER_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_JSDEBUGGER_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_JSDEBUGGER_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_JSDEBUGGER_OPENED_BOOLEAN'
     },
     'Tilt': {
-      'flag': 'DEVTOOLS_TILT_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_TILT_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_TILT_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_TILT_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_TILT_OPENED_BOOLEAN'
     },
     'Profiler': {
-      'flag': 'DEVTOOLS_JSPROFILER_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_JSPROFILER_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_JSPROFILER_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_JSPROFILER_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_JSPROFILER_OPENED_BOOLEAN'
     },
     'Paint Flashing': {
-      'flag': 'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_PAINTFLASHING_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_PAINTFLASHING_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_PAINTFLASHING_OPENED_BOOLEAN'
     },
     'Scratchpad': {
-      'flag': 'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG', 
-      'time': 'DEVTOOLS_SCRATCHPAD_TIME_ACTIVE_SECONDS', 
+      'flag': 'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_SCRATCHPAD_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_SCRATCHPAD_OPENED_BOOLEAN'
     }
   };
 
   self.Toolnames = _.keys(self.Toolmap);
 
-  self.getBucketsForTool = function(measure, version, ranges) {
+  self.getBucketsForTool = function(measure, version, ranges, callback) {
     var results = _.map(_.range(ranges.length), function() { return 0; });
     var subs = 0;
-
-    return new Promise(function(resolve, reject) {
-      self.telemetryInstance.loadEvolutionOverBuilds(version, measure, function(evolution) {
-        var result = {};
-        evolution.each(function(date, histogram, index) {
-          subs += histogram.submissions();
-          histogram.each(function(count, start, end, index) {
-            _.each(ranges, function(range, i) {
-              if (isInRange(range, start, end)) {
-                results[i] += count;
-              }
-            });
+    self.telemetryInstance.loadEvolutionOverBuilds(version, measure, function(evolution) {
+      var result = {};
+      evolution.each(function(date, histogram, index) {
+        subs += histogram.submissions();
+        histogram.each(function(count, start, end, index) {
+          _.each(ranges, function(range, i) {
+            if (isInRange(range, start, end)) {
+              results[i] += count;
+            }
           });
         });
-        resolve({results: results, submissions: subs});
       });
+      callback({results: results, submissions: subs});
     });
+
   };
 
-  self.getWeeklyToolUsage = function(windows, toolName) {
+  self.getWeeklyToolUsage = function(windows, toolName, callback) {
     var collected = {};
     // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
     // loop through the windows
@@ -287,40 +260,38 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     console.dir(windows);
     var limit = _.size(windows);
 
-    return new Promise(function(resolve, reject) {
-      _.each(windows, function(win) {
-        // debugger;
-        _i++;
-        _.each(win, function(version, channel) {
-          // get some data
-          // console.log(version, channel);
-          var measures = self.Toolmap[toolName];
-          _.each(measures, function(m) {
-            if (!collected[m]) {
-              collected[m] = {};
-            }
-            self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
-              evolution.each(function (date, histogram, index) {
-                var _strDate = formatDate(date);
-                if (!collected[m][_strDate]) {
-                  collected[m][_strDate] = [];
-                }
-                histogram.each(function(count, start, end, index) {
-                  collected[m][_strDate].push({
-                    count: count,
-                    start: start,
-                    end: end,
-                    index: index,
-                    date: date
-                  });
+
+    _.each(windows, function(win) {
+      // debugger;
+      _i++;
+      _.each(win, function(version, channel) {
+        // get some data
+        // console.log(version, channel);
+        var measures = self.Toolmap[toolName];
+        _.each(measures, function(m) {
+          if (!collected[m]) {
+            collected[m] = {};
+          }
+          self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
+            evolution.each(function (date, histogram, index) {
+              var _strDate = formatDate(date);
+              if (!collected[m][_strDate]) {
+                collected[m][_strDate] = [];
+              }
+              histogram.each(function(count, start, end, index) {
+                collected[m][_strDate].push({
+                  count: count,
+                  start: start,
+                  end: end,
+                  index: index,
+                  date: date
                 });
               });
-
-              if (_i === limit) {
-                console.dir(collected);
-                resolve(collected);
-              }
             });
+
+            if (_i === limit) {
+              callback(collected);
+            }
           });
         });
       });

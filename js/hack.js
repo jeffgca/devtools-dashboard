@@ -156,12 +156,9 @@ var fetcher = function(tool) {
   var currentYear = weeks_end.year();
   var windows = generateBuildWindows(start, end);
 
-  var promise = dd.init();
-
-  promise.then(function() {
-    dd.getWeeklyToolUsage(windows, tool).done(function(results) {
+  dd.init(function() {
+    dd.getWeeklyToolUsage(windows, tool, function(results) {
       createWeeklyMap(results, render);
-      // render('Weeks', 'Sessions', results);
     });
   });
 }
