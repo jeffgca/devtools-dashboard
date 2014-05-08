@@ -13,6 +13,7 @@ var tools = {
   'Tilt':               'DEVTOOLS_TILT_OPENED_PER_USER_FLAG',
   'Profiler':           'DEVTOOLS_JSPROFILER_OPENED_PER_USER_FLAG',
   'Paint Flashing':     'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG',
+  'Developer Toolbar':  'DEVTOOLS_DEVELOPERTOOLBAR_OPENED_PER_USER_FLAG',
   'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG'
 };
 
@@ -76,7 +77,7 @@ $(function() {
         chart_columns = _.map(data, function(item) {
           return item.label;
         });
-        chart_struct["labels"] = chart_columns;
+        chart_struct.labels = chart_columns;
       }
 
       var _str_columns = _.keys(data[0]).join(',')+"\n";
