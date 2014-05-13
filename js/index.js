@@ -1,9 +1,9 @@
-function isInRange(range, start, end) {
-  if (start >= range.start && end <= range.end) {
-      return true;
-  }
-  return false;
-}
+// function isInRange(range, start, end) {
+//   if (start >= range.start && end <= range.end) {
+//       return true;
+//   }
+//   return false;
+// }
 
 function generateBuildWindows(startNightly, endNightly) {
   var diff = (endNightly - startNightly)+1;
@@ -14,7 +14,7 @@ function generateBuildWindows(startNightly, endNightly) {
     //   out['beta'] = 'beta/'+b
     // }
     if (a >= startNightly) {
-      out['aurora'] = 'aurora/'+a
+      out.aurora = 'aurora/'+a;
     }
     // if (r >= startNightly) {
     //   out['release'] = 'release/'+r
@@ -24,7 +24,7 @@ function generateBuildWindows(startNightly, endNightly) {
   return versions;
 }
 
-var start = 24, end = 30;
+var start = 24, end;
 
 
 // var ranges = [{
@@ -51,7 +51,7 @@ var ranges = [{
   }
 ];
 
-var pp = function(o) { return JSON.stringify(o)};
+var pp = function(o) { return JSON.stringify(o); };
 
 /*
   Notes:
@@ -86,12 +86,12 @@ var createWeeklyMap = function(results, callback) {
                 count: count.count,
                 week: strDate,
                 _intWeek: _weeks
-              };         
-            } 
+              };
+            }
             else {
               map2[r.desc][strDate].count += count.count;
             }
-          }  
+          }
         });
       });
     });
@@ -100,9 +100,20 @@ var createWeeklyMap = function(results, callback) {
   callback('Weeks', 'Sessions', map2);
 };
 
+var gData;
+
 var render = function(xTitle, yTitle, data) {
+  console.log(data);
+  gData = data;
+
+  var columns = _.map(data[_.first(_.keys(gData))], function(item) {
+    return item.week;
+  });
   var series = [];
-  var columns = _.keys(_.values(data)[0]);
+  // var columns = _.map(data[0], function(item) {
+  //   return item.strDate;
+  // });
+  console.log(columns);
 
   _.each(data, function(weeks, label) {
     var _data = _.map(weeks, function(week, i) {
@@ -111,7 +122,7 @@ var render = function(xTitle, yTitle, data) {
     series.push({
       name: label,
       data: _data
-    })
+    });
   });
 
   $('#graph-container').highcharts({
@@ -142,7 +153,7 @@ var render = function(xTitle, yTitle, data) {
   });
   $('#loader').hide();
   $('#graph-container').show();
-}
+};
 // var OFFLINE = true;// load from local json
 
 var fetcher = function(tool) {
@@ -154,14 +165,31 @@ var fetcher = function(tool) {
   var weeks_end = moment(), weeks_start = moment('2013-05-14'), full_range = moment().range(start, end);
   var currentWeek = weeks_end.weeks();
   var currentYear = weeks_end.year();
-  var windows = generateBuildWindows(start, end);
+  
 
   dd.init(function() {
+    end = _.last(dd.getVersionRange()); // get the latest nightly version
+    // console.log("end");console.log(end);
+    var aurora = (end - 1);
+    var compiled = _.template("<span><label>Aurora:</label> <%= v.aurora %><label>Nightly:</label> <%= v.nightly %></span>");
+
+    $('.reload-status').append(compiled({v: {aurora: aurora, nightly: end}}));
+
+    var windows = generateBuildWindows(start, end);
+
     dd.getWeeklyToolUsage(windows, tool, function(results) {
-      createWeeklyMap(results, render);
+      var sorted = {};
+      _.each(results, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+          return moment(strDate, 'MM/DD/YYYY').unix();
+        });
+        sorted[key] = _sorted;
+      });
+      // console.log(sorted);
+      render('Weeks', 'Sesssions', sorted)
     });
   });
-}
+};
 
 $(function() {
 

@@ -28,7 +28,7 @@
   <h3>Firefox Developer Tools</h3>
 
   <div class="btn-toolbar">
-    <div class="btn-group">
+    <div class="btn-group reload-status">
       <button id="reload-btn" type="button" class="btn btn-default">Reload</button>
     </div>
   </div>
@@ -38,12 +38,12 @@
 
   <div id="about-container">
     <h3>What is this?</h3>
-    <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:
-      <ul>
-        <li>Number of sessions with more than 5 minutes of use.</li>
-        <li>Number of sessions with more than 30 minutes of use.</li>
-      </ul>
-    </p>
+    <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:</p>
+    <ul>
+      <li>Number of sessions with more than 5 minutes of use.</li>
+      <li>Number of sessions with more than 30 minutes of use.</li>
+    </ul>
+    
     <h3>What this tells us:</h3>
     <p>We should see an indicator for overall devtools usage over time, hopefully (and apparently) increasing over time.</p>
     <p>Some caveats:
@@ -79,5 +79,6 @@
 <script src="js/moment-with-langs.min.js"></script>
 <script src="js/moment-range.js"></script>
 <script src="js/index.js"></script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>
