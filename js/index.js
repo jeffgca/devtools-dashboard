@@ -26,95 +26,11 @@ function generateBuildWindows(startNightly, endNightly) {
 
 var start = 24, end;
 
-
-// var ranges = [{
-//     start: 60,
-//     end: Infinity,
-//     desc: "More than 60 seconds"
-//   },
-//   {
-//     start:1200,
-//     end:Infinity,
-//     desc: "More than 20 minutes"
-//   }
-// ];
-
-var ranges = [{
-    start: 300,
-    end: Infinity,
-    desc: "More than 5 minutes"
-  },
-  {
-    start:1800,
-    end:Infinity,
-    desc: "More than 30 minutes"
-  }
-];
-
-var pp = function(o) { return JSON.stringify(o); };
-
-/*
-  Notes:
-  * telemetry landed for devtools in nightly/24
-  * first numbers are from 2013/05/14
-*/
-
-var createWeeklyMap = function(results, callback) {
-
-  var map = {};
-  var map2 = _.object(_.pluck(ranges, 'desc'), [{}, {}]);
-
-  // divide results into weeks
-  _.each(results, function(measure) {
-    // console.log(measure);
-    _.each(measure, function(counts, date) {
-      var _m = moment(date);
-      var _year = _m.year();
-      var _weeks = _m.weeks();
-
-      var strDate = _m.clone().startOf('week').format('MM/DD/YYYY');
-
-      _.each(ranges, function(r) {
-        _.each(counts, function(count) {
-          if (isInRange(r, count.start, count.end)) {
-            if (!map2[r.desc]) {
-              map2[r.desc] = {};
-            }
-
-            if (!map2[r.desc][strDate]) {
-              map2[r.desc][strDate] = {
-                count: count.count,
-                week: strDate,
-                _intWeek: _weeks
-              };
-            }
-            else {
-              map2[r.desc][strDate].count += count.count;
-            }
-          }
-        });
-      });
-    });
-  });
-
-  callback('Weeks', 'Sessions', map2);
-};
-
-var gData;
-
 var render = function(xTitle, yTitle, data) {
-  console.log(data);
-  gData = data;
-
-  var columns = _.map(data[_.first(_.keys(gData))], function(item) {
+  var columns = _.map(data[_.first(_.keys(data))], function(item) {
     return item.week;
   });
   var series = [];
-  // var columns = _.map(data[0], function(item) {
-  //   return item.strDate;
-  // });
-  console.log(columns);
-
   _.each(data, function(weeks, label) {
     var _data = _.map(weeks, function(week, i) {
       return week.count;

@@ -321,7 +321,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
         var _weeks = _m.weeks();
 
         var strWeek = _m.clone().startOf('week').format('MM/DD/YYYY');
-  
+
         if (!dateGroups['strWeek']) {
           dateGroups['strWeek'] = tplObject;
         }
@@ -347,52 +347,9 @@ var DevtoolsTelemetry = function(telemetryInstance) {
             }
           });
         });
-        // console.log(strWeek);
       });
-      // console.log(mapped);
-      // ensure we are sorted properly
-
-      // XXX need to make sure each hash has the dates sorted properly in chrono order
-
       callback(mapped);
     });
-
-
-    // var _i = 0;
-    // var limit = _.size(windows);
-    // _.each(windows, function(win) {
-    //   _i++;
-    //   _.each(win, function(version, channel) {
-    //     var measures = self.Toolmap[toolName];
-    //     _.each(measures, function(m) {
-    //       if (!collected[m]) {
-    //         collected[m] = {};
-    //       }
-    //       self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
-    //         evolution.each(function (date, histogram, index) {
-    //           var _strDate = formatDate(date);
-    //           if (!collected[m][_strDate]) {
-    //             collected[m][_strDate] = [];
-    //           }
-    //           histogram.each(function(count, start, end, index) {
-    //             collected[m][_strDate].push({
-    //               count: count,
-    //               start: start,
-    //               end: end,
-    //               index: index,
-    //               date: date
-    //             });
-    //           });
-    //         });
-
-    //         if (_i === limit) {
-    //           console.dir(collected);
-    //           callback(collected);
-    //         }
-    //       });
-    //     });
-    //   });
-    // });
   };
 };
 
