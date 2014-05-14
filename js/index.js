@@ -50,7 +50,7 @@ var fetcher = function(tool) {
   $('#graph-container').html("");
   $('#loader').show();
 
-  $.getJSON('/data/toolbox-weekly.json', function(json) {
+  $.getJSON('data/toolbox-weekly.json', function(json) {
     render('Weeks', 'Sessions', json.results);
   });
 };
