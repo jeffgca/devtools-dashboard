@@ -113,7 +113,18 @@ var DevtoolsTelemetry = function(telemetryInstance) {
           }
         });
       });
-      callback(results);
+
+      var sorted = {};
+      _.each(results, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+
+          var i = moment(strDate, 'MM/DD/YYYY').unix();
+          console.log(i);
+          return i;
+        });
+        sorted[key] = _sorted;
+      });
+      callback(sorted);
     });
   };
 
@@ -348,10 +359,38 @@ var DevtoolsTelemetry = function(telemetryInstance) {
           });
         });
       });
-      callback(mapped);
+      var sorted = {};
+      _.each(mapped, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+          return moment(strDate, 'MM/DD/YYYY').unix();
+        });
+        // we never want the current week.
+        _sorted = _.initial(_sorted);
+        sorted[key] = _sorted;
+      });
+      callback(sorted);
     });
   };
 };
+
+function generateBuildWindows(startNightly, endNightly) {
+  var diff = (endNightly - startNightly)+1;
+  var versions =  _.map(_.range(diff), function(i) {
+    var n = startNightly+i, a = n-1, b = n-2, r = n-3;
+    var out = {nightly: 'nightly/'+n};
+    // if (b >= startNightly) {
+    //   out['beta'] = 'beta/'+b
+    // }
+    if (a >= startNightly) {
+      out.aurora = 'aurora/'+a;
+    }
+    // if (r >= startNightly) {
+    //   out['release'] = 'release/'+r
+    // }
+    return out;
+  });
+  return versions;
+}
 
 function isInRange(range, start, end) {
   if (start >= range.start && end <= range.end) {
