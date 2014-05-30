@@ -61,6 +61,12 @@ $(function() {
     'nightly'  : [32],
   };
 
+  var pair_channels = _.pairs(channels);
+
+  // labels
+  $('.aurora').html(pair_channels[0].join(' '));
+  $('.nightly').html(pair_channels[1].join(' '));
+
   var chart_struct = {
     datasets: [],
     labels: []
