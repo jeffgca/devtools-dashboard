@@ -57,8 +57,8 @@ $(function() {
   });
 
   var channels = {
-    'aurora'  : [29],
-    'nightly'  : [30],
+    'aurora'  : [31],
+    'nightly'  : [32],
   };
 
   var chart_struct = {
