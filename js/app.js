@@ -3,6 +3,10 @@ function formatDate(d) {
   return d.getDate() + '/' + (d.getMonth() + 1) + '/' + (d.getYear() + 1900);
 }
 
+function cap(str) {
+  return str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 var tools = {
   'Inspector':          'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
   'Web Console':        'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG',
@@ -63,10 +67,6 @@ $(function() {
 
   var pair_channels = _.pairs(channels);
 
-  // labels
-  $('.aurora').html(pair_channels[0].join(' '));
-  $('.nightly').html(pair_channels[1].join(' '));
-
   var chart_struct = {
     datasets: [],
     labels: []
@@ -76,6 +76,7 @@ $(function() {
   var chart_columns = [];
 
   _.each(channels, function(versions, channel) {
+    $('.'+channel).html([cap(channel), versions[0]].join(' '));
     fetchChannel(versions, channel, function(data) {
 
 
