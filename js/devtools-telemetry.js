@@ -15,7 +15,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       self.versions = self.telemetryInstance.versions();
     }
     if (callback !== void 0) {
-      callback(null, true)
+      callback(null, true);
     }
   };
 
@@ -28,8 +28,8 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     if (!self.versions) {
       self._getVersions();
     }
-    return _.each(self.versions)
-  }
+    return _.each(self.versions);
+  };
 
   self.getLatestVersions = function() {
     return self._latestVersionMap;
