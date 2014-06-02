@@ -1,0 +1,94 @@
+#keys {
+    margin-left: 80px;
+}
+
+.color-key {
+    margin-left: 50px;
+}
+
+.color-key {
+    /*width: 10%;*/
+    border: 1px #ababab solid;
+    padding: 2px 8px 0 6px;
+    float: left;
+    margin: 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-shadow: 0px 0px 1px #fff;
+}
+
+.key {
+    height: 20px;
+}
+
+.aurora {
+    background-color: rgba(98, 100, 242, 0.5);
+}
+
+.nightly {
+    background-color: rgba(81, 180, 93, 0.5);
+}
+
+.aurora-26 {
+    background-color: green;
+}
+
+.aurora-27 {
+    background-color: red;
+}
+
+.aurora-28 {
+    background-color: orange;
+}
+
+.aurora-29 {
+    background-color: pink;
+}
+
+#container2 {
+    display: none;
+}
+
+pre {
+    width: 80%;
+    margin-left: 80px;
+    background-color: #efefef;
+    border: solid 1px #ababab;
+    font-family: monospace;
+    height: 300px;
+}
+
+#controls {
+    margin: 0 0px 20px 80px;
+}
+
+#loader {
+    position: relative;
+    overflow: hidden;
+    width: 940px;
+    height: 400px;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    left: 0.5px;
+    top: 0px;
+}
+
+#graph-container {
+    padding-top: 20px;
+}
+
+#about-container {
+    padding-top: 12px;
+}
+
+.reload-status span {
+    display: block;
+    padding-top: : 12px;
+    padding-left: 10px;
+    float: right;
+}
+
+.reload-status span label {
+    margin-left: 10px;
+}
