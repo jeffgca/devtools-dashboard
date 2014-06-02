@@ -38,11 +38,12 @@ var scraper = function(url, dir, port, callback) {
 
 if (!module.parent) {
   scraper(pageUrl, 'public', 8090, function(results) {
-    fs.writeFile(dataFile, JSON.stringify(results), function(err, result) {
-      if (err) console.log(err);
-      // console.log("Wrote file: "+dataFile);
-      process.exit();
-    });
+    // fs.writeFile(dataFile, JSON.stringify(results), function(err, result) {
+    //   if (err) console.log(err);
+    //   console.log("Wrote file? " + dataFile);
+    //   process.exit();
+    // });
+    console.log(JSON.stringify(results));
   });
 }
 
