@@ -3,7 +3,7 @@ var phantom = require('phantom'),
     path = require('path'),
     connect = require('connect');
 
-var dataFile = path.join(__dirname, '../data/toolbox-weekly.json');
+var dataFile = path.join(__dirname, '../public/data/toolbox-weekly.json');
 var pageUrl = 'http://localhost:8090/cache.html';
 
 var scraper = function(url, dir, port, callback) {
