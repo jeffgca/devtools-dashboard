@@ -1,0 +1,8 @@
+var connect = require('connect')
+  , path = require('path')
+  , port = process.env.PORT || 8000
+  , server = connect()
+
+server.use(connect.static(path.join(__dirname, 'public'))).listen(port, function() {
+  console.log('Static server listening on '+port);
+});
