@@ -51,7 +51,7 @@ var fetcher = function(tool) {
   $('#loader').show();
 
   $.getJSON('data/toolbox-weekly.json', function(json) {
-    render('Weeks', 'Sessions', json.results);
+    render('Weeks', 'Sessions', json);
   });
 };
 

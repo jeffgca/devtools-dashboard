@@ -37,8 +37,8 @@ var scraper = function(url, dir, port, callback) {
 };
 
 if (!module.parent) {
-  scraper(pageUrl, '../', 8090, function(err, results) {
-    fs.writeFile(dataFile, results, function(err, result) {
+  scraper(pageUrl, '../public', 8090, function(results) {
+    fs.writeFile(dataFile, JSON.stringify(results), function(err, result) {
       if (err) throw err;
       console.log("Wrote file: "+dataFile);
       process.exit();
