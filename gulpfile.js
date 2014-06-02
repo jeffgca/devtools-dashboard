@@ -1,3 +1,4 @@
+var fs = require('fs');
 var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     dest = './';
@@ -12,6 +13,19 @@ gulp.task('watch', ['server'], function() {
   var server = livereload();
   gulp.watch(dest + '/**').on('change', function(file) {
       server.changed(file.path);
+  });
+});
+
+gulp.task('scrape', function(cb) {
+  var cache = require('./scrape/cache');
+  cache.scraper(cache.pageUrl, './', '8090', function(results) {
+    fs.writeFile(cache.dataFile, results, function(err, result) {
+      if (err) {
+        cb(err);
+      }
+      cb(null);
+      process.exit();
+    });
   });
 });
 
