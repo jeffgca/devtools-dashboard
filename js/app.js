@@ -3,6 +3,10 @@ function formatDate(d) {
   return d.getDate() + '/' + (d.getMonth() + 1) + '/' + (d.getYear() + 1900);
 }
 
+function cap(str) {
+  return str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 var tools = {
   'Inspector':          'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
   'Web Console':        'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG',
@@ -13,6 +17,7 @@ var tools = {
   'Tilt':               'DEVTOOLS_TILT_OPENED_PER_USER_FLAG',
   'Profiler':           'DEVTOOLS_JSPROFILER_OPENED_PER_USER_FLAG',
   'Paint Flashing':     'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG',
+  'Developer Toolbar':  'DEVTOOLS_DEVELOPERTOOLBAR_OPENED_PER_USER_FLAG',
   'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG'
 };
 
@@ -56,9 +61,11 @@ $(function() {
   });
 
   var channels = {
-    'aurora'  : [29],
-    'nightly'  : [30],
+    'aurora'  : [31],
+    'nightly'  : [32],
   };
+
+  var pair_channels = _.pairs(channels);
 
   var chart_struct = {
     datasets: [],
@@ -69,6 +76,7 @@ $(function() {
   var chart_columns = [];
 
   _.each(channels, function(versions, channel) {
+    $('.'+channel).html([cap(channel), versions[0]].join(' '));
     fetchChannel(versions, channel, function(data) {
 
 
@@ -76,7 +84,7 @@ $(function() {
         chart_columns = _.map(data, function(item) {
           return item.label;
         });
-        chart_struct["labels"] = chart_columns;
+        chart_struct.labels = chart_columns;
       }
 
       var _str_columns = _.keys(data[0]).join(',')+"\n";

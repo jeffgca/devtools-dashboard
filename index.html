@@ -28,7 +28,7 @@
   <h3>Firefox Developer Tools</h3>
 
   <div class="btn-toolbar">
-    <div class="btn-group">
+    <div class="btn-group reload-status">
       <button id="reload-btn" type="button" class="btn btn-default">Reload</button>
     </div>
   </div>
@@ -38,12 +38,12 @@
 
   <div id="about-container">
     <h3>What is this?</h3>
-    <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:
-      <ul>
-        <li>Number of sessions with more than 5 minutes of use.</li>
-        <li>Number of sessions with more than 30 minutes of use.</li>
-      </ul>
-    </p>
+    <p>This graph shows Firefox Developer Tools toolbox usage over time, totaled into weekly counts and based on the Telemetry measure <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'</a>. For simplicity, Aurora and Nightly build counts have been combined. This measure gives us 'How long has the toolbox been active (seconds)' for a given session. These counts are then totaled up and divided into two ranges:</p>
+    <ul>
+      <li>Number of sessions with more than 5 minutes of use.</li>
+      <li>Number of sessions with more than 30 minutes of use.</li>
+    </ul>
+    
     <h3>What this tells us:</h3>
     <p>We should see an indicator for overall devtools usage over time, hopefully (and apparently) increasing over time.</p>
     <p>Some caveats:
@@ -57,7 +57,7 @@
         <li>The number of <em>sessions</em> does not directly correlate to the number of <em>users</em>.</li>
         <li>As Telemetry data collection is only on by default for the Aurora and Nightly channels, only Aurora and Nightly data is included and totaled here.</li>
         <li>Beta and Release data is not used because it a) can involve very large numbers of reports, and b) is very inconsistent, for example compare <a target="_blank" href="http://telemetry.mozilla.org/#release/26/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Release data</a> with <a target="_blank" href="http://telemetry.mozilla.org/#aurora/29/DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS">Aurora data</a> for the same measure.</li>
-        <li>I've noticed that Telemetry data hosted on S3 is sometimes sketchy, so <a target="_blank" href="http://note.io/1hp1CJ4">here is a screenshot</a> of what this graph typically looks like.</li>
+        <li>I've noticed that Telemetry data hosted on S3 is sometimes sketchy, so <a target="_blank" href="http://note.io/1uXHRm3">here is a screenshot</a> of what this graph typically looks like.</li>
       </ul>
     </p>
   </div>
@@ -71,13 +71,16 @@
 <script src="http://underscorejs.org/underscore.js"></script>
 <!-- <script src="js/underscore-min.js"></script> -->
 <script src="js/async.js"></script>
-<script src="js/promise-3.2.0.js"></script>
 <script src="js/devtoolslib.js"></script>
 <script src="http://telemetry.mozilla.org/v1/big.js"></script>
 <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
 <script src="js/highcharts.js"></script>
 <script src="js/moment-with-langs.min.js"></script>
 <script src="js/moment-range.js"></script>
-<script src="js/hack.js"></script>
+<script src="js/index.js"></script>
+<script>
+// for dev only
+// document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+</script>
 </body>
 </html>

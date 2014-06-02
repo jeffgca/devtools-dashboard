@@ -39,6 +39,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 
+
   // a map of all the measures, by tool
   self.map = { devtools: {} };
 
@@ -112,7 +113,18 @@ var DevtoolsTelemetry = function(telemetryInstance) {
           }
         });
       });
-      callback(results);
+
+      var sorted = {};
+      _.each(results, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+
+          var i = moment(strDate, 'MM/DD/YYYY').unix();
+          console.log(i);
+          return i;
+        });
+        sorted[key] = _sorted;
+      });
+      callback(sorted);
     });
   };
 
@@ -252,49 +264,149 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
   };
 
+  self.getVersionRange = function() {
+    return _.compact(_.unique(_.map(self.versions, function(v) {
+      var _v = parseInt(v.split('/').pop(), 10);
+      if(/^[\d]+$/.test(_v) && _v >= 24) {
+        return _v;
+      }
+    }))).sort();
+  };
+
   self.getWeeklyToolUsage = function(windows, toolName, callback) {
     var collected = {};
     // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
     // loop through the windows
-    var _i = 0;
-    console.dir(windows);
-    var limit = _.size(windows);
-
-
-    _.each(windows, function(win) {
-      // debugger;
-      _i++;
-      _.each(win, function(version, channel) {
-        // get some data
-        // console.log(version, channel);
+    var functions = _.map(windows, function(win) {
+      var outer = _.map(win, function(version, channel) {
         var measures = self.Toolmap[toolName];
-        _.each(measures, function(m) {
-          if (!collected[m]) {
-            collected[m] = {};
-          }
-          self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
-            evolution.each(function (date, histogram, index) {
-              var _strDate = formatDate(date);
-              if (!collected[m][_strDate]) {
-                collected[m][_strDate] = [];
-              }
-              histogram.each(function(count, start, end, index) {
-                collected[m][_strDate].push({
-                  count: count,
-                  start: start,
-                  end: end,
-                  index: index,
-                  date: date
+        var inner = _.map(measures, function(m) {
+          return function(callback) {
+            self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
+              var mapped = evolution.map(function (date, histogram, index) {
+                var _strDate = formatDate(date);
+                return histogram.map(function(count, start, end, index) {
+                  return {
+                    strDate: _strDate,
+                    count: count,
+                    start: start,
+                    end: end,
+                    index: index,
+                    date: date,
+                    measure: m
+                  };
                 });
               });
+              // console.log(mapped);
+              callback(null, mapped);
             });
+          };
+        });
+        return inner;
+      });
+      return outer;
+    });
 
-            if (_i === limit) {
-              callback(collected);
+    functions = _.flatten(functions);
+
+    async.parallel(functions, function(err, results) {
+      if (err) throw err;
+
+      var flat_results = _.flatten(results);
+      var dateGroups = {};
+      _.each(flat_results, function(result) {
+        if (!dateGroups[result.strDate]) {
+          dateGroups[result.strDate] = [];
+        }
+        dateGroups[result.strDate].push(result);
+      });
+
+      var graph = {};
+      // console.log();
+      var tplObject = _.object(_.pluck(ranges, 'desc'), [{}, {}]);
+      var mapped = {};
+
+      _.each(dateGroups, function(counts, date) {
+        var _m = moment(date);
+        var _year = _m.year();
+        var _weeks = _m.weeks();
+
+        var strWeek = _m.clone().startOf('week').format('MM/DD/YYYY');
+
+        if (!dateGroups['strWeek']) {
+          dateGroups['strWeek'] = tplObject;
+        }
+
+        _.each(ranges, function(r) {        
+          _.each(counts, function(count) {
+            if (isInRange(r, count.start, count.end)) {
+              var desc = r.desc;
+              if (!mapped[desc]) {
+                mapped[desc] = {};
+              }
+
+              if (!mapped[desc][strWeek]) {
+                mapped[desc][strWeek] = {
+                  count: count.count,
+                  week: strWeek,
+                  _intWeek: _weeks
+                };
+              }
+              else {
+                mapped[desc][strWeek].count += count.count;
+              }
             }
           });
         });
       });
+      var sorted = {};
+      _.each(mapped, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+          return moment(strDate, 'MM/DD/YYYY').unix();
+        });
+        // we never want the current week.
+        _sorted = _.initial(_sorted);
+        sorted[key] = _sorted;
+      });
+      callback(sorted);
     });
   };
 };
+
+function generateBuildWindows(startNightly, endNightly) {
+  var diff = (endNightly - startNightly)+1;
+  var versions =  _.map(_.range(diff), function(i) {
+    var n = startNightly+i, a = n-1, b = n-2, r = n-3;
+    var out = {nightly: 'nightly/'+n};
+    // if (b >= startNightly) {
+    //   out['beta'] = 'beta/'+b
+    // }
+    if (a >= startNightly) {
+      out.aurora = 'aurora/'+a;
+    }
+    // if (r >= startNightly) {
+    //   out['release'] = 'release/'+r
+    // }
+    return out;
+  });
+  return versions;
+}
+
+function isInRange(range, start, end) {
+  if (start >= range.start && end <= range.end) {
+      return true;
+  }
+  return false;
+}
+
+var ranges = [{
+    start: 300,
+    end: Infinity,
+    desc: "More than 5 minutes"
+  },
+  {
+    start:1800,
+    end:Infinity,
+    desc: "More than 30 minutes"
+  }
+];

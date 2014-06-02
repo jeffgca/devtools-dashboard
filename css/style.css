@@ -81,3 +81,14 @@ pre {
 #about-container {
     padding-top: 12px;
 }
+
+.reload-status span {
+    display: block;
+    padding-top: : 12px;
+    padding-left: 10px;
+    float: right;
+}
+
+.reload-status span label {
+    margin-left: 10px;
+}
