@@ -1,9 +1,10 @@
 var phantom = require('phantom'),
     fs = require('fs'),
     path = require('path'),
-    connect = require('connect');
+    connect = require('connect'),
+    mkdirp = require('mkdirp');
 
-var dataFile = path.join(__dirname, '../public/data/toolbox-weekly.json');
+var dataFile = path.join(__dirname, '../public/', 'data', 'toolbox-weekly.json');
 var pageUrl = 'http://localhost:8090/cache.html';
 
 var scraper = function(url, dir, port, callback) {
@@ -38,12 +39,14 @@ var scraper = function(url, dir, port, callback) {
 
 if (!module.parent) {
   scraper(pageUrl, 'public', 8090, function(results) {
-    // fs.writeFile(dataFile, JSON.stringify(results), function(err, result) {
-    //   if (err) console.log(err);
-    //   console.log("Wrote file? " + dataFile);
-    //   process.exit();
-    // });
-    console.log(JSON.stringify(results));
+    mkdirp(path.dirname(dataFile), function(e, r) {
+      if (e) throw e;
+      fs.writeFile(dataFile, JSON.stringify(results), function(err, result) {
+        if (err) console.log(err);
+        console.log("Wrote file? " + dataFile);
+        process.exit();
+      });
+    });
   });
 }
 

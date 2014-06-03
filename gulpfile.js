@@ -1,4 +1,6 @@
 var fs = require('fs');
+var mkdirp = require('mkdirp');
+var path = require('path');
 var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     dest = './';
@@ -18,13 +20,16 @@ gulp.task('watch', ['server'], function() {
 
 gulp.task('scrape', function(cb) {
   var cache = require('./scrape/cache');
-  cache.scraper(cache.pageUrl, './public', '8090', function(results) {
-    fs.writeFile(cache.dataFile, results, function(err, result) {
-      if (err) {
-        cb(err);
-      }
-      cb(null);
-      process.exit();
+  mkdirp(path.dirname(cache.dataFile), function(e, r) {
+    if (e) throw e;
+    cache.scraper(cache.pageUrl, './public', '8090', function(results) {
+      fs.writeFile(cache.dataFile, results, function(err, result) {
+        if (err) {
+          cb(err);
+        }
+        cb(null);
+        process.exit();
+      });
     });
   });
 });
