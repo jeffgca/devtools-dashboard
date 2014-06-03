@@ -4,5 +4,5 @@ var connect = require('connect')
   , server = connect()
 
 server.use(connect.static(path.join(__dirname, '../public'))).listen(port, function() {
-  console.log('Static server listening on '+port);
+  console.log('Static server listening on '+port)
 });

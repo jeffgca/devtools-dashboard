@@ -3,7 +3,7 @@ var mkdirp = require('mkdirp');
 var path = require('path');
 var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
-    dest = './';
+    dest = './public';
 
 gulp.task('server', function(next) {
   var connect = require('connect'),
