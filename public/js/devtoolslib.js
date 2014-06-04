@@ -273,6 +273,83 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     }))).sort();
   };
 
+  self.getDailyToolUsage = function(windows, toolName, callback) {
+
+
+    var collected = {};
+    // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
+    // loop through the windows
+    var functions = _.map(windows, function(win) {
+      var outer = _.map(win, function(version, channel) {
+        var measures = self.Toolmap[toolName];
+        var inner = _.map(measures, function(m) {
+          return function(callback) {
+            self.telemetryInstance.loadEvolutionOverTime(version, m, function(evolution) {
+              var mapped = evolution.map(function (date, histogram, index) {
+                var _strDate = formatDate(date);
+                return histogram.map(function(count, start, end, index) {
+                  // console.log(_strDate);
+                  return {
+                    strDate: _strDate,
+                    count: count,
+                    start: start,
+                    end: end,
+                    index: index,
+                    date: date,
+                    measure: m
+                  };
+                });
+              });
+              // console.log(mapped);
+              callback(null, mapped);
+            });
+          };
+        });
+        return inner;
+      });
+      return outer;
+    });
+
+    functions = _.flatten(functions);
+
+    async.parallel(functions, function(err, results) {
+      if (err) throw err;
+
+      var flat_results = _.flatten(results);
+
+      // flat_results = flat_results.slice(0, 10000);
+
+      // console.log(flat_results);
+
+      // _.each()
+      var dateGroups = {};
+      var tplObject = _.object(_.pluck(ranges, 'desc'), [0, 0]);
+      console.log(flat_results.length);
+      _.each(ranges, function(r) {
+        _.each(flat_results, function(result) {
+          if (isInRange(r, result.start, result.end) && result.count > 0) {
+            if (!dateGroups[result.strDate]) {
+              dateGroups[result.strDate] = _.object(_.pluck(ranges, 'desc'), [0, 0]);
+              dateGroups[result.strDate].strDate = result.strDate;
+              dateGroups[result.strDate].timestamp = moment(result.strDate, 'MM/DD/YYYY').unix();
+            }
+            dateGroups[result.strDate][r.desc] += result.count;
+          }
+        });
+      });
+
+      dateGroups = _.sortBy(dateGroups, 'timestamp');
+
+      callback(dateGroups);
+      // var days = {};
+      // _.each(dateGroups, function(d, date) {
+      //   if (!days)
+      // })
+
+
+    });
+  };
+
   self.getWeeklyToolUsage = function(windows, toolName, callback) {
     var collected = {};
     // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
