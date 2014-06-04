@@ -92,3 +92,13 @@ pre {
 .reload-status span label {
     margin-left: 10px;
 }
+
+#date-collected {
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+#date-collected > span {
+    font-weight: normal;
+    font-style: italic;
+}

@@ -44,14 +44,14 @@ var render = function(xTitle, yTitle, data) {
   $('#loader').hide();
   $('#graph-container').show();
 };
-// var OFFLINE = true;// load from local json
 
 var fetcher = function(tool) {
   $('#graph-container').html("");
   $('#loader').show();
 
   $.getJSON('data/toolbox-weekly.json', function(json) {
-    render('Weeks', 'Sessions', json);
+    render('Weeks', 'Sessions', json.results);
+    $('#date-collected > span').html(Date(json.timestamp));
   });
 };
 
