@@ -98,72 +98,17 @@ function fetch(callback) {
     if (err) throw err;
     callback(results);
   });
-
-  // _.each(channels, function(versions, channel) {
-  //   fetchChannel(versions, channel, function(data) {
-
-  //     console.log(data);
-
-  //     callback(data);
-
-  //     // if (chart_columns.length === 0) {
-  //     //   chart_columns = _.map(data, function(item) {
-  //     //     return item.label;
-  //     //   });
-  //     //   chart_struct.labels = chart_columns;
-  //     // }
-
-  //     // var _str_columns = _.keys(data[0]).join(',')+"\n";
-
-  //     // // var _str_data = _.map(data, function(row) {
-  //     // //   return _.values(row).join(',');
-  //     // // }).join("\n");
-
-  //     // // $('pre#output').append(_str_columns+_str_data+"\n");
-
-  //     // chart_data = _.map(data, function(row) {
-  //     //   return row.yes;
-  //     // });
-
-  //     // var color = $('.'+channel).css('background-color');
-
-  //     // chart_struct.datasets.push({
-  //     //   fillColor: color,
-  //     //   strokeColor: color,
-  //     //   data: chart_data
-  //     // });
-
-  //     // if (chart_struct.datasets.length === _.size(channels)) {
-
-  //     //   var ctx = $("#data-chart").get(0).getContext("2d");
-  //     //   var _chart = new Chart(ctx).Bar(chart_struct);
-  //     // }
-  //   });
-  // });
 };
 
 function render(data) {
   var categories = _.pluck(data[0].data, 'label');
   var series = [];
 
-  var totals = {};
-
-
   _.each(data, function(channel) {
     _tool = {name: channel.channel};
     _tool.data = _.pluck(channel.data, 'yes');
-    _.each(channel.data, function(d) {
-      if (!totals[d.label]) {
-        totals[d.label] = {count: d.yes, name: d.label};  
-      }
-      else {
-        totals[d.label].count += d.yes;
-      }
-    })
     series.push(_tool);
   });
-
-  // console.log(_.sortBy(totals, 'count'));
 
   var graph = {
       chart: {
@@ -186,8 +131,7 @@ function render(data) {
                   return (Math.abs(this.value) / 1000) + 'K';
               }
           },
-          min: 0,
-          max: 30000
+          min: 0
       },
       plotOptions: {
           series: {
