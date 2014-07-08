@@ -15,17 +15,6 @@
 <script src="http://telemetry.mozilla.org/v1/big.js"></script>
 <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
 <script>
-var main = function(callback) {
-  var start = 24, 
-      dd = new DevtoolsTelemetry(Telemetry);
-
-  dd.init(function() {
-    var end = _.last(dd.getVersionRange()); // get the latest nightly version
-    var windows = generateBuildWindows(start, end);
-
-    dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
-  });
-};
 </script>
 </body>
 </html> 

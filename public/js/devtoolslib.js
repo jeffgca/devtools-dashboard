@@ -350,10 +350,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 
-  self.getWeeklyToolUsage = function(windows, toolName, callback) {
-    var collected = {};
-    // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
-    // loop through the windows
+  self._getFunctionsFromWindows = function(windows, toolName) {
     var functions = _.map(windows, function(win) {
       var outer = _.map(win, function(version, channel) {
         var measures = self.Toolmap[toolName];
@@ -370,7 +367,8 @@ var DevtoolsTelemetry = function(telemetryInstance) {
                     end: end,
                     index: index,
                     date: date,
-                    measure: m
+                    measure: m,
+                    channel: channel
                   };
                 });
               });
@@ -383,8 +381,14 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       });
       return outer;
     });
+    return _.flatten(functions);
+  };
 
-    functions = _.flatten(functions);
+  self.getWeeklyToolUsage = function(windows, toolName, callback) {
+    var collected = {};
+    // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
+    // loop through the windows
+    var functions = self._getFunctionsFromWindows(windows, toolName);
 
     async.parallel(functions, function(err, results) {
       if (err) throw err;
@@ -414,7 +418,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
           dateGroups['strWeek'] = tplObject;
         }
 
-        _.each(ranges, function(r) {        
+        _.each(ranges, function(r) {
           _.each(counts, function(count) {
             if (isInRange(r, count.start, count.end)) {
               var desc = r.desc;
@@ -448,6 +452,78 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       callback(sorted);
     });
   };
+
+  self.getWeeklyChannelUsage = function(windows, toolName, callback) {
+    
+    var functions = self._getFunctionsFromWindows(windows, toolName);
+
+
+    // do stuff
+    async.parallel(functions, function(err, results) {
+      if (err) throw err;
+
+      var flat_results = _.flatten(results);
+      var dateGroups = {};
+      _.each(flat_results, function(result) {
+        if (!dateGroups[result.strDate]) {
+          dateGroups[result.strDate] = [];
+        }
+        dateGroups[result.strDate].push(result);
+      });
+
+      var graph = {};
+      // console.log();
+      var tplObject = _.object(['beta', 'aurora', 'nightly'], [{}, {}, {}]);
+      console.log(tplObject);
+      var mapped = {};
+
+      // console.log(dateGroups);
+      // callback(dateGroups);
+
+      _.each(dateGroups, function(counts, date) {
+        var _m = moment(date);
+        var _year = _m.year();
+        var _weeks = _m.weeks();
+        var strWeek = _m.clone().startOf('week').format('MM/DD/YYYY');
+
+        if (!dateGroups['strWeek']) {
+          dateGroups['strWeek'] = tplObject;
+        }
+
+        var overFiveRange = ranges[0];
+
+        _.each(counts, function(count) {
+          if (isInRange(overFiveRange, count.start, count.end)) {
+            if (!mapped[count.channel]) {
+              mapped[count.channel] = {};
+            }
+
+            if (!mapped[count.channel][strWeek]) {
+              mapped[count.channel][strWeek] = {
+                count: count.count,
+                week: strWeek,
+                _intWeek: _weeks
+              };
+            }
+            else {
+              mapped[count.channel][strWeek].count += count.count;
+            }
+          }
+        });
+      });
+
+      var sorted = {};
+      _.each(mapped, function(weeks, key) {
+        var _sorted = _.sortBy(weeks, function(week, strDate) {
+          return moment(strDate, 'MM/DD/YYYY').unix();
+        });
+        // we never want the current week.
+        _sorted = _.initial(_sorted);
+        sorted[key] = _sorted;
+      });
+      callback(sorted);
+    });
+  };
 };
 
 function generateBuildWindows(startNightly, endNightly) {
@@ -455,9 +531,9 @@ function generateBuildWindows(startNightly, endNightly) {
   var versions =  _.map(_.range(diff), function(i) {
     var n = startNightly+i, a = n-1, b = n-2, r = n-3;
     var out = {nightly: 'nightly/'+n};
-    // if (b >= startNightly) {
-    //   out['beta'] = 'beta/'+b
-    // }
+    if (b >= startNightly) {
+      out.beta = 'beta/'+b;
+    }
     if (a >= startNightly) {
       out.aurora = 'aurora/'+a;
     }

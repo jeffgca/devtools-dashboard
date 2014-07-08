@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Developer Tools Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+  </head>
+  <body>
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li><a href="./">Home</a></li>
+    <li class="dropdown active">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        Other Graphs <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="./">Weekly Toolbox usage</a></li>
+        <li><a href="./channels.html">Toolbox usage by channel</a></li>
+        <li><a href="./tools-relative.html">Compare tool usage</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div id="graph-container">
+  </div>
+  <div class="btn-toolbar">
+    <div class="btn-group reload-status">
+      <button id="reload-btn" type="button" class="btn btn-default">Reload</button>
+    </div>
+  </div>
+  <div id="about-container">
+    <h3>XXX TODO</h3>
+  </div>
+  <p>Based on Mozilla's <a target="_blank" href="http://telemetry.mozilla.org/docs.html">Telemetry open data service</a>.</p>
+</div>
+
+<a href="https://github.com/canuckistani/devtools-dashboard"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+
+<!-- jQuery -->
+<script src="js/jquery-1.10.2.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- moar scripts -->
+<script src="js/underscore-min.js"></script>
+<script src="http://telemetry.mozilla.org/v1/big.js"></script>
+<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+<script src="js/promise-3.2.0.js"></script>
+<script src="js/async.js"></script>
+<script src="js/devtools-telemetry.js"></script>
+<script src="js/versions.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/channel-graph.js"></script>
+</body>
+</html>
