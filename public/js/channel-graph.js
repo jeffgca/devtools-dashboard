@@ -4,15 +4,10 @@ var render = function(xTitle, yTitle, data) {
 
   var series = [];
 
-  var columns = _.map(data, function(item) {
-    return item.strDate;
-  });
-
-  console.log("columns", columns);
-
   _.each(data, function(weeks, label) {
     var _data = _.map(weeks, function(week, i) {
-      return week.count;
+      var _ts = Date.parse(week.week);
+      return [_ts, week.count];
     });
     series.push({
       name: label,
@@ -30,11 +25,17 @@ var render = function(xTitle, yTitle, data) {
       yAxis: {
         'title': {
           'text': yTitle
-        }
+        },
+        'min': 0
       },
       xAxis: {
-        // categories: ["More than 1 Minute", "More than 60 minutes"]
-        categories: columns
+        type: 'datetime',
+        dateTimeLabelFormats: { // don't display the dummy year
+          month: '%b %Y',
+        },
+        title: {
+          text: 'Date'
+        }
       },
       labels: {
         rotation: -45,

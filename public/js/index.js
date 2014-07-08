@@ -1,13 +1,19 @@
 var start = 24, end;
 
 var render = function(xTitle, yTitle, data) {
-  var columns = _.map(data[_.first(_.keys(data))], function(item) {
-    return item.week;
-  });
   var series = [];
+  // var first = data[_.keys(data)[0]];
+  // var columns = _.pluck(first, 'week');
+
+  // console.log("columns", columns);
+
   _.each(data, function(weeks, label) {
     var _data = _.map(weeks, function(week, i) {
-      return week.count;
+      var _ts = Date.parse(week.week);
+      return [
+        _ts,
+        week.count
+      ];
     });
     series.push({
       name: label,
@@ -25,11 +31,17 @@ var render = function(xTitle, yTitle, data) {
       yAxis: {
         'title': {
           'text': yTitle
-        }
+        },
+        'min': 0
       },
       xAxis: {
-        // categories: ["More than 1 Minute", "More than 60 minutes"]
-        categories: columns
+        type: 'datetime',
+        dateTimeLabelFormats: { // don't display the dummy year
+          month: '%b %Y',
+        },
+        title: {
+          text: 'Date'
+        }
       },
       labels: {
         rotation: -45,
@@ -51,7 +63,10 @@ var fetcher = function(tool) {
 
   $.getJSON('data/toolbox-weekly.json', function(json) {
     render('Weeks', 'Sessions', json.results);
-    $('#date-collected > span').html(Date(json.timestamp));
+    console.log(json.timestamp);
+    var date = new Date();
+    date.setSeconds(json.timestamp);
+    $('#date-collected > span').html(date);
   });
 };
 
