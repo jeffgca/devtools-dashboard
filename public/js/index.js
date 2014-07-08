@@ -64,8 +64,7 @@ var fetcher = function(tool) {
   $.getJSON('data/toolbox-weekly.json', function(json) {
     render('Weeks', 'Sessions', json.results);
     console.log(json.timestamp);
-    var date = new Date();
-    date.setSeconds(json.timestamp);
+    var date = new Date(json.timestamp);
     $('#date-collected > span').html(date);
   });
 };
