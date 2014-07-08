@@ -8,7 +8,7 @@ function cap(str) {
 }
 
 var tools = {
-  'Toolbox':            'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
+  // 'Toolbox':            'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
   'Inspector':          'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
   'Web Console':        'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG',
   'Net Monitor':        'DEVTOOLS_NETMONITOR_OPENED_PER_USER_FLAG',
@@ -71,6 +71,7 @@ function fetch(callback) {
   });
 
   var channels = {
+    'beta'    : [31],
     'aurora'  : [32],
     'nightly'  : [33],
   };
