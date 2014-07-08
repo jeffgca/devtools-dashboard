@@ -24,8 +24,6 @@ if (argv.h) {
   process.exit();
 }
 
-console.log(argv);
-
 var dataFile = path.join(__dirname, '../public/', 'data', argv.output);
 var shellPath = path.join(__dirname, 'public', 'js', argv.shell);
 var pageUrl = 'http://localhost:8090/cache.html';
@@ -44,9 +42,6 @@ var scraper = function(url, dir, port, callback) {
         });
 
         page.open(pageUrl, function (status) {
-          console.log("INJECT", page.injectJs(shellPath));
-          // console.log(Object.keys(page));
-
           page.includeJs('./js/'+argv.shell, function() {
             page.evaluate(function() {
               window.phantomLoaded = true;
