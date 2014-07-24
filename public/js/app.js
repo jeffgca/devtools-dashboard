@@ -1,4 +1,3 @@
-
 function formatDate(d) {
   return d.getDate() + '/' + (d.getMonth() + 1) + '/' + (d.getYear() + 1900);
 }
@@ -8,7 +7,7 @@ function cap(str) {
 }
 
 var tools = {
-  // 'Toolbox':            'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
+  'Toolbox':            'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
   'Inspector':          'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
   'Web Console':        'DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG',
   'Net Monitor':        'DEVTOOLS_NETMONITOR_OPENED_PER_USER_FLAG',
@@ -71,9 +70,9 @@ function fetch(callback) {
   });
 
   var channels = {
-    'beta'    : [31],
-    'aurora'  : [32],
-    'nightly'  : [33],
+    'beta'    : [32],
+    'aurora'  : [33],
+    'nightly'  : [34],
   };
 
   var pair_channels = _.pairs(channels);
@@ -85,7 +84,6 @@ function fetch(callback) {
 
   var r = [], _i = 0;
   var chart_columns = [];
-
 
   var functions = _.map(channels, function(versions, channel) {
     return function(callback) {
@@ -99,7 +97,7 @@ function fetch(callback) {
     if (err) throw err;
     callback(results);
   });
-};
+}
 
 function render(data) {
   var categories = _.pluck(data[0].data, 'label');
@@ -141,9 +139,5 @@ function render(data) {
       },
       series: series
   };
-
-  console.log(graph);
-
   $('#graph-container').highcharts(graph);
-
 }
