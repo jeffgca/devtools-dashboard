@@ -8,7 +8,11 @@ var gulp = require('gulp'),
 gulp.task('server', function(next) {
   var connect = require('connect'),
       server = connect();
-  server.use(connect.static(dest)).listen(process.env.PORT || 8080, next);
+  var _port = process.env.PORT || 8080;
+  server.use(connect.static(dest)).listen(_port, function() {
+    console.log(">>> listening on port "+_port);
+    next();
+  });
 });
 
 gulp.task('watch', ['server'], function() {
