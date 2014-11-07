@@ -22,33 +22,31 @@ var tools = {
   'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG'
 };
 
-function fetchChannel(targetVersions, channel, finish) {
+function fetchChannel(targetVersion, channel, finish) {
   Telemetry.init(function() {
     var devtoolsData = new DevtoolsTelemetry(Telemetry);
     var totals = [];
-    var _i = 0, limit = (_.size(tools) * _.size(targetVersions));
-    _.each(tools, function(tool, label) {
-      _.each(targetVersions, function(i) {
-        var version = channel+'/'+i;
-        devtoolsData.getUsageGraph(version, tool, function(err, result) {
-          _i++;
-          var _r = {
-            // tool: tool,
-            label: label,
-            yes: result.yes,
-            no: result.no,
-            total: result.total,
-            version: i
-          };
-          
-          totals.push(_r);
-          // console.log(_i, limit);
-          if (_i === limit) {
-            // sum up totals for each channels / tool combination
+    var _i = 0, limit = (_.size(tools));
+    _.each(tools, function(tool, label) {      
+      var _version = channel+'/'+targetVersion;
+      devtoolsData.getUsageGraph(_version, tool, function(err, result) {
+        _i++;
+        var _r = {
+          // tool: tool,
+          label: label,
+          yes: result.yes,
+          no: result.no,
+          total: result.total,
+          version: targetVersion
+        };
+        
+        totals.push(_r);
+        // console.log(_i, limit);
+        if (_i === limit) {
+          // sum up totals for each channels / tool combination
 
-            finish(_.sortBy(totals, "yes").reverse());
-          }
-        });
+          finish(_.sortBy(totals, "yes").reverse());
+        }
       });
     });
   });
@@ -71,12 +69,12 @@ function fetch(callback) {
   });
 
   var channels = {
-    'beta'    : [32],
-    'aurora'  : [33],
-    'nightly'  : [34],
+    'beta'    : 34,
+    'aurora'  : 35,
+    'nightly' : 36,
   };
 
-  var pair_channels = _.pairs(channels);
+  // var pair_channels = _.pairs(channels);
 
   var chart_struct = {
     datasets: [],
@@ -86,10 +84,10 @@ function fetch(callback) {
   var r = [], _i = 0;
   var chart_columns = [];
 
-  var functions = _.map(channels, function(versions, channel) {
+  var functions = _.map(channels, function(version, channel) {
     return function(callback) {
-      fetchChannel(versions, channel, function(data) {
-        callback(null, {channel: channel, data: data});
+      fetchChannel(version, channel, function(data) {
+        callback(null, {channel: channel + ' '+version, data: data});
       });
     };
   });
@@ -102,6 +100,7 @@ function fetch(callback) {
 
 function render(data) {
   var categories = _.pluck(data[0].data, 'label');
+  console.log(categories);
   var series = [];
 
   _.each(data, function(channel) {
@@ -119,7 +118,6 @@ function render(data) {
           text: 'Tool usage'
       },
       xAxis: {
-          // categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
           categories: categories
       },
       yAxis: {
