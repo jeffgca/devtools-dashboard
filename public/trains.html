@@ -23,36 +23,40 @@
       </ul>
     </li>
   </ul>
+
   <div id="graph-container">
   </div>
-  <div id="date-collected">Date collected: <span></span></div>
   <div class="btn-toolbar">
     <div class="btn-group reload-status">
       <button id="reload-btn" type="button" class="btn btn-default">Reload</button>
     </div>
   </div>
-  <div id="about-container">
-    <h3>What the?</h3>
-    <p>This graph tracks toolbox usage over time comparing the beta, aurora and nightly channels. In particular each point is showing the number of sessions reported where the toolbox is open for more than 5 minutes. Note in particular that telemtry collection is now opted-in by default for Beta starting in early/mid June, an that there is a corresponding huge jump in the number of sessions collected there.</p>
-  </div>
+  <!-- <div id="about-container">
+    <h3>What is this?</h3>
+
+    <p>This graph uses the series of 'per user flag' ( for example '<a target="_blank" href="http://telemetry.mozilla.org/#nightly/31/DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG">DEVTOOLS_WEBCONSOLE_OPENED_PER_USER_FLAG</a>' ) Telemetry measures to show us relative usage across the tools for specific channel/version combinations, in this case current Beta, Aurora and Nightly versions.</p>
+
+    <p>The 'per user flag' measure group sets a preference for a given channel &amp; version combination indicating if the tool has been used at all. This is the best way of indicating rough user population size, based on some assumptions. The potential flaw here is that it may be common for users to have both Aurora and Nightly installed, and so any usage of a given tool in both builds would count that user twice for this measure.</p>
+  </div> -->
   <p>Based on Mozilla's <a target="_blank" href="http://telemetry.mozilla.org/docs.html">Telemetry open data service</a>.</p>
 </div>
 
 <a href="https://github.com/canuckistani/devtools-dashboard"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
 <!-- jQuery -->
-<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/jquery-2.1.1.js"></script>
 <!-- Bootstrap JavaScript -->
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <!-- moar scripts -->
 <script src="js/underscore-min.js"></script>
 <script src="http://telemetry.mozilla.org/v1/big.js"></script>
 <script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+<script src="js/moment-with-langs.min.js"></script>
+<script src="js/moment-range.js"></script>
 <script src="js/promise-3.2.0.js"></script>
 <script src="js/async.js"></script>
-<script src="js/devtools-telemetry.js"></script>
-<script src="js/versions.js"></script>
+<script src="js/devtoolslib.js"></script>
 <script src="js/highcharts.js"></script>
-<script src="js/channel-graph.js"></script>
+<script src="js/trains.js"></script>
 </body>
 </html>
