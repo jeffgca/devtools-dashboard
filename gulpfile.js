@@ -1,3 +1,14 @@
+/** 
+
+To install node dependencies:
+
+npm install --save gulp gulp-livereload serve-static connect
+
+To use liveReload, add this to your page:
+
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
+*/
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var path = require('path');
