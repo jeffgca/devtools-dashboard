@@ -20,67 +20,73 @@ var tools = {
 // }
 
 function fetchToolboxUsage(finish) {
-  var start = 32, // the version we started to collect Beta data
+  var start = 33, // the version we started to collect Beta data
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
     var end = _.last(dd.getVersionRange()); // get the latest nightly version
     var windows = generateBuildWindows(start, end);
 
-    console.log(windows);
+    // console.log(windows);
+
+    var _channelNames = _.keys(_.last((windows)));
+    var channels  = _.map(_channelNames, function(name) {
+      return {name: name, versions: _.compact(_.pluck(windows, name))};
+    });
 
     // dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
+    // debugger;
 
-    var _version = _.last(windows).nightly;
 
-    Telemetry.loadEvolutionOverTime(_version, tools.Toolbox, function(histogramEvolution) {
-      var results = histogramEvolution.map((date, histogram) => {
-        var _m = moment(date);
-        var shortDate = _m.format('YYYY/MM/DD');
-        var _count = 0;
-        histogram.each((count, start, end, index) => {
-          if (start === 1) {
-            _count += count;
-          }
-        });
-        return {date: date, count: _count};
+    // var _version = _.last(windows).nightly;
+
+
+    var outer = _.map(channels, function(channel) {
+      var functions = _.map(channel.versions, function(version) {
+        return function(callback) {
+          Telemetry.loadEvolutionOverTime(version, tools.Toolbox, function(histogramEvolution) {
+            var results = histogramEvolution.map(function (date, histogram) {
+              var _m = moment(date);
+              var shortDate = _m.format('YYYY/MM/DD');
+              var _count = 0;
+              histogram.each((count, start, end, index) => {
+                if (start === 1) {
+                  _count += count;
+                }
+              });
+              return {channel: channel.name, date: date, count: _count, version: version};
+            });
+            callback(null, results);
+          });
+        }
       });
 
-      finish(results);
+      return {name: channel.name, functions: functions};
     });
+
+    var functions = _.flatten(_.map(outer, function(_item) {
+      return _item.functions;
+    }));
+
+    // console.table(functions);
+
+    async.parallel(functions, function(err, results) {
+      console.log("done parallel");
+
+      // results = graphify(results);
+
+      finish(results);
+    })
   });
 }
 
+function graphify(results) {
+  return _.map(results, function(arr) {
+    return _.map(arr, function(result) {
 
-// function fetchChannel(targetVersion, channel, finish) {
-//   Telemetry.init(function() {
-//     var devtoolsData = new DevtoolsTelemetry(Telemetry);
-//     var totals = [];
-//     var _i = 0, limit = (_.size(tools));
-//     _.each(tools, function(tool, label) {
-//       var _version = channel+'/'+targetVersion;
-//       devtoolsData.getUsageGraph(_version, tool, function(err, result) {
-//         _i++;
-//         var _r = {
-//           // tool: tool,
-//           label: label,
-//           yes: result.yes,
-//           no: result.no,
-//           total: result.total,
-//           version: targetVersion
-//         };
-        
-//         totals.push(_r);
-//         // console.log(_i, limit);
-//         if (_i === limit) {
-//           // sum up totals for each channels / tool combination
-
-//           finish(_.sortBy(totals, "yes").reverse());
-//         }
-//       });
-//     });
-//   });
-// }
+    });
+  });
+}
 
 $(function() {
 
@@ -106,63 +112,58 @@ function fetch(callback) {
   var r = [], _i = 0;
   var chart_columns = [];
 
-  // var functions = _.map(channels, function(versions, channel) {
-  //   return function(callback) {
-  //     fetchChannels(versions, channel, function(data) {
-  //       callback(null, {versions: versions, channel: channel, data: data});
-  //     });
-  //   };
-  // });
-
-  fetchToolboxUsage((results) => { 
-    // 
-    console.log("in callback");
-    console.table(results);
+  fetchToolboxUsage(function (results) {
+    // console.table(results);
+    callback(results);
   });
 }
 
 function render(data) {
+  var categories = [];
+  var series = _.map(data, function(version) {
+    var pair = _.pairs(_.groupBy(version, 'version')).pop();
+    var _data =_.map(pair[1], function(row) {
+      function getDate(d) {
+        return Date.UTC( (d.getYear()+1900), d.getMonth(), d.getDate() );
+      }
+      return [getDate(row.date), row.count];
+    });
 
-  console.log(data);
-  return;
-  // var categories = _.pluck(data[0].data, 'label');
-  // console.log(categories);
-  // var series = [];
-
-  // _.each(data, function(channel) {
-  //   _tool = {name: channel.channel};
-  //   _tool.data = _.pluck(channel.data, 'yes');
-  //   series.push(_tool);
-  // });
+    pair[1] = _data;
+    var grouped =  _.object(['name', 'data'], pair);
+    return grouped;
+  });
 
   var graph = {
-      chart: {
-          type: 'column',
-          height: 600,
-      },
-      title: {
-          text: 'Tool usage'
-      },
-      xAxis: {
-          categories: categories
-      },
-      yAxis: {
-          title: {
-              text: null
-          },
-          labels: {
-              formatter: function(){
-                  return (Math.abs(this.value) / 1000) + 'K';
-              }
-          },
-          min: 0
-      },
-      plotOptions: {
-          series: {
-              stacking: 'normal'
-          }
-      },
-      series: series
-  };
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: 'Channel usage, Daily counts'
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                month: '%e. %b',
+                year: '%b'
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Unique installs'
+            },
+            min: 0
+        },
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+        },
+
+        series: series
+    };
+
   $('#graph-container').highcharts(graph);
 }
