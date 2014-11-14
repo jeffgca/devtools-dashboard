@@ -20,7 +20,7 @@ var tools = {
 // }
 
 function fetchToolboxUsage(finish) {
-  var start = 33, // the version we started to collect Beta data
+  var start = 32, // the version we started to collect Beta data
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
@@ -139,7 +139,7 @@ function render(data) {
             type: 'spline'
         },
         title: {
-            text: 'Channel usage, Daily counts'
+            text: 'Toolbox usage, Daily counts'
         },
         xAxis: {
             type: 'datetime',
@@ -159,10 +159,16 @@ function render(data) {
         },
         tooltip: {
             headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+            pointFormat: '{point.x:%b %e}: {point.y:.2f}'
         },
-
-        series: series
+        series: series,
+        plotOptions: {
+          series: {
+            marker: {
+              enabled: false
+            }
+          }
+        }
     };
 
   $('#graph-container').highcharts(graph);
