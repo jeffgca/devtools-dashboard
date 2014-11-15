@@ -139,7 +139,7 @@ function render(data) {
             type: 'spline'
         },
         title: {
-            text: 'Toolbox usage, Daily counts'
+            text: 'Toolbox initial opening, Daily counts'
         },
         xAxis: {
             type: 'datetime',

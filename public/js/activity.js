@@ -109,7 +109,7 @@ function render(data) {
             type: 'spline'
         },
         title: {
-            text: 'Toolbox usage uptake trends'
+            text: 'Toolbox raw activity'
         },
         xAxis: {
             type: 'datetime',
