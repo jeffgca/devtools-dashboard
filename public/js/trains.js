@@ -49,7 +49,7 @@ function fetchToolboxUsage(finish) {
               var _m = moment(date);
               var shortDate = _m.format('YYYY/MM/DD');
               var _count = 0;
-              histogram.each((count, start, end, index) => {
+              histogram.each(function(count, start, end, index) {
                 if (start === 1) {
                   _count += count;
                 }
