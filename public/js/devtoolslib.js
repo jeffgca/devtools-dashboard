@@ -128,57 +128,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 
-  /*
-    exponential histograms are not great as-is for the kind of data
-    we've collected, so we need to post-process them and count up simplified
-    buckets of time: (strawman)
-    1. 0s
-    2. 1-60s
-    3. 61s <= 10m
-    4. 10m to 60m // 1 hour
-    5. 61m to 481m // 1 hour to 8 hours
-    6. 480m to 2400m // 8 hours => 40 Hours
-    7. 2400m+ // more than 40 hours
-  */
-
-  // self.ranges = [
-  //   {
-  //     start:0,
-  //     end:1,
-  //     desc: "Never"
-  //   },
-  //   {
-  //     start:1,
-  //     end:60,
-  //     desc: "Less than 1m"
-  //   },
-  //   {
-  //     start:60,
-  //     end:600,
-  //     desc: "Less than 10m"
-  //   },
-  //   {
-  //     start:600,
-  //     end:3600,
-  //     desc: "10m to 60m"
-  //   },
-  //   {
-  //     start:3600,
-  //     end:28800,
-  //     desc: "1 to 8 hours"
-  //   },
-  //   {
-  //     start:28800,
-  //     end:144000,
-  //     desc: "8 to 40 hours"
-  //   },
-  //   {
-  //     start:144000,
-  //     end:Infinity,
-  //     desc: "More than 40 hours"
-  //   }
-  // ];
-
   function isInRange(range, start, end) {
     if (start >= range.start && end <= range.end) {
         return true;
@@ -274,8 +223,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   };
 
   self.getDailyToolUsage = function(windows, toolName, callback) {
-
-
     var collected = {};
     // in this case 'window' is an array with telemetry-friendly version strings eg aurora/29
     // loop through the windows
@@ -316,12 +263,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       if (err) throw err;
 
       var flat_results = _.flatten(results);
-
-      // flat_results = flat_results.slice(0, 10000);
-
-      // console.log(flat_results);
-
-      // _.each()
       var dateGroups = {};
       var tplObject = _.object(_.pluck(ranges, 'desc'), [0, 0]);
       console.log(flat_results.length);
