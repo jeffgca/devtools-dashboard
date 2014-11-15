@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "connect": "*",
+    "gulp-git": "^0.5.4",
     "mkdirp": "^0.5.0",
     "optimist": "^0.6.1",
     "phantom": "*",

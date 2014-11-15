@@ -16,6 +16,22 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     dest = './public';
 
+var git = require('gulp-git');
+
+gulp.task('push', function() {
+  git.push('origin', 'master', function (err) {
+    if (err) throw err;
+  });
+});
+
+gulp.task('deploy', function() {
+  git.push('paas master', 'master', function (err) {
+    if (err) throw err;
+  });
+});
+
+gulp.task('sync', ['push', 'deploy']);
+
 gulp.task('server', function(next) {
   var connect = require('connect'),
       server = connect();
