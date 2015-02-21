@@ -25,7 +25,7 @@ gulp.task('push', function() {
 });
 
 gulp.task('deploy', function() {
-  git.push('paas master', 'master', function (err) {
+  git.push('paas', 'master', function (err) {
     if (err) throw err;
   });
 });

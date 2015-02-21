@@ -504,3 +504,9 @@ var ranges = [{
     desc: "More than 30 minutes"
   }
 ];
+
+if (typeof exports !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports.DevtoolsTelemetry = DevtoolsTelemetry;
+}
+
+

@@ -102,3 +102,8 @@ pre {
     font-weight: normal;
     font-style: italic;
 }
+
+#reload-btn {
+    color: rebeccapurple;
+    /*padding: 200px;*/
+}

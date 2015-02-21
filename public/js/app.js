@@ -73,9 +73,9 @@ function fetch(callback) {
   });
 
   var channels = {
-    'beta'    : 35,
-    'aurora'  : 36,
-    'nightly' : 37,
+    'beta'    : 36,
+    'aurora'  : 37,
+    'nightly' : 38,
   };
 
   // var pair_channels = _.pairs(channels);
