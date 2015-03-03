@@ -4,9 +4,9 @@ var phantom = require('phantom'),
     connect = require('connect'),
     mkdirp = require('mkdirp');
 
-
-var defaultDataFile = 'toolbox-weekly.json',
-  defaultShell = 'cache-weekly.js';
+// /usr/local/bin/dokku run devtools-dash node scrape/cache.js -o toolbox-channels.json -s cache-channels.js
+var defaultDataFile = 'toolbox-channels.json',
+  defaultShell = 'cache-channels.js';
 
 var optimist = require('optimist'), argv = optimist
   .usage('Query and analyze telemetry data.\nUsage: $0 -o outputfile -s shellfile')
@@ -42,14 +42,10 @@ var scraper = function(url, dir, port, callback) {
         });
 
         page.open(pageUrl, function (status) {
-          console.log("opened");
           page.includeJs('./js/'+argv.shell, function() {
-            console.log("included");
             page.evaluate(function() {
               window.phantomLoaded = true;
-              console.log(typeof main);
               window.main(function(results) {
-                console.log("got here");
                 if (typeof window.callPhantom === 'function') {
                   window.callPhantom(results);
                 }
