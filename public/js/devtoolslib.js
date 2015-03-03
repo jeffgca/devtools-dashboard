@@ -494,7 +494,7 @@ function isInRange(range, start, end) {
 }
 
 var ranges = [{
-    start: 30,
+    start: 300,
     end: Infinity,
     desc: "More than 30 seconds."
   },
