@@ -3,6 +3,7 @@ var main = function(callback) {
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
-    dd.getWeeklyChannelUsage('Toolbox', callback);
+    var windows = generateBuildWindows(32, 39);
+    dd.getWeeklyChannelUsage(windows, 'Toolbox', callback);
   });
 };

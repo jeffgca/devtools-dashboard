@@ -494,9 +494,9 @@ function isInRange(range, start, end) {
 }
 
 var ranges = [{
-    start: 300,
+    start: 30,
     end: Infinity,
-    desc: "More than 5 minutes"
+    desc: "More than 30 seconds."
   },
   {
     start:1800,
@@ -508,5 +508,3 @@ var ranges = [{
 if (typeof exports !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports.DevtoolsTelemetry = DevtoolsTelemetry;
 }
-
-

@@ -42,12 +42,15 @@ var scraper = function(url, dir, port, callback) {
         });
 
         page.open(pageUrl, function (status) {
+          console.log("opened");
           page.includeJs('./js/'+argv.shell, function() {
+            console.log("included");
             page.evaluate(function() {
               window.phantomLoaded = true;
+              console.log(typeof main);
               window.main(function(results) {
                 console.log("got here");
-                if (typeof callPhantom === 'function') {
+                if (typeof window.callPhantom === 'function') {
                   window.callPhantom(results);
                 }
               });
