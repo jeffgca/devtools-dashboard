@@ -24,55 +24,55 @@ function fetchToolboxUsage(finish) {
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
-    var end = _.last(dd.getVersionRange()); // get the latest nightly version
-    var windows = generateBuildWindows(start, end);
-
-    // console.log(windows);
-
-    var _channelNames = _.keys(_.last((windows)));
-    var channels  = _.map(_channelNames, function(name) {
-      return {name: name, versions: _.compact(_.pluck(windows, name))};
-    });
-
-    // dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
-    // debugger;
-
-
-    // var _version = _.last(windows).nightly;
-
-
-    var outer = _.map(channels, function(channel) {
-      var functions = _.map(channel.versions, function(version) {
-        return function(callback) {
-          Telemetry.loadEvolutionOverTime(version, tools.Toolbox, function(histogramEvolution) {
-            var results = histogramEvolution.map(function (date, histogram) {
-              var _m = moment(date);
-              var shortDate = _m.format('YYYY/MM/DD');
-              var _count = 0;
-              histogram.each(function(count, start, end, index) {
-                if (start === 1) {
-                  _count += count;
-                }
-              });
-              return {channel: channel.name, date: date, count: _count, version: version};
-            });
-            callback(null, results);
-          });
-        }
+    dd.getVersionRange(function(err, nightlyVersions) {
+      var windows = generateBuildWindows(start, _.last(nightlyVersions));  
+      var _channelNames = _.keys(_.last((windows)));
+      var channels  = _.map(_channelNames, function(name) {
+        return {name: name, versions: _.compact(_.pluck(windows, name))};
       });
 
-      return {name: channel.name, functions: functions};
+      // dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
+      // debugger;
+
+
+      // var _version = _.last(windows).nightly;
+
+
+      var outer = _.map(channels, function(channel) {
+        var functions = _.map(channel.versions, function(version) {
+          return function(callback) {
+            Telemetry.loadEvolutionOverTime(version, tools.Toolbox, function(histogramEvolution) {
+              var results = histogramEvolution.map(function (date, histogram) {
+                var _m = moment(date);
+                var shortDate = _m.format('YYYY/MM/DD');
+                var _count = 0;
+                histogram.each(function(count, start, end, index) {
+                  if (start === 1) {
+                    _count += count;
+                  }
+                });
+                return {channel: channel.name, date: date, count: _count, version: version};
+              });
+              callback(null, results);
+            });
+          }
+        });
+
+        return {name: channel.name, functions: functions};
+      });
+
+      var functions = _.flatten(_.map(outer, function(_item) {
+        return _item.functions;
+      }));
+
+      // console.table(functions);
+
+      async.parallel(functions, function(err, results) {
+        finish(results);
+      })
+
+
     });
-
-    var functions = _.flatten(_.map(outer, function(_item) {
-      return _item.functions;
-    }));
-
-    // console.table(functions);
-
-    async.parallel(functions, function(err, results) {
-      finish(results);
-    })
   });
 }
 

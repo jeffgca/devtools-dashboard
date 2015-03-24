@@ -213,13 +213,24 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
   };
 
-  self.getVersionRange = function() {
-    return _.compact(_.unique(_.map(self.versions, function(v) {
+  self.getVersionRange = function(callback) {
+    var telemetryVersions =  _.compact(_.unique(_.map(self.versions, function(v) {
       var _v = parseInt(v.split('/').pop(), 10);
       if(/^[\d]+$/.test(_v) && _v >= 24) {
         return _v;
       }
     }))).sort();
+
+    // console.log(telemetryVersions);
+
+    getCurrentVersions(function(versions) {
+
+      var intNightly = parseInt(versions.nightly);
+      var filtered = _.filter(telemetryVersions, function(v) {
+        return (v <= intNightly);
+      });
+      callback(null, filtered);
+    })
   };
 
   self.getDailyToolUsage = function(windows, toolName, callback) {
@@ -466,6 +477,10 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 };
+
+function getCurrentVersions(callback) {
+  $.getJSON('http://fxver.paas.canuckistani.ca/', callback);
+}
 
 function generateBuildWindows(startNightly, endNightly) {
   var diff = (endNightly - startNightly)+1;
