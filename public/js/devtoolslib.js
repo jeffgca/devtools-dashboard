@@ -221,10 +221,8 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       }
     }))).sort();
 
-    // console.log(telemetryVersions);
-
-    getCurrentVersions(function(versions) {
-
+    getCurrentVersions(function(err, versions) {
+      if (err) throw err;
       var intNightly = parseInt(versions.nightly);
       var filtered = _.filter(telemetryVersions, function(v) {
         return (v <= intNightly);
@@ -478,8 +476,23 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   };
 };
 
+var VERSION_CACHE, LASTFETCHED;
+var ONE_DAY = (1000 * 60 * 60 * 24);
 function getCurrentVersions(callback) {
-  $.getJSON('http://fxver.paas.canuckistani.ca/', callback);
+  LASTFETCHED = localStorage.getItem('LASTFETCHED');
+  if (LASTFETCHED+ONE_DAY < Date.now()) {
+    $.getJSON('http://fxver.paas.canuckistani.ca/', function(result) {
+      console.log("result", result);
+      localStorage.setItem('VERSION_CACHE', JSON.stringify(result));
+      localStorage.setItem('LASTFETCHED', Date.now());
+      callback(null, result);
+    });
+  }
+  else {
+    console.log("hit cache");
+    var result = JSON.parse(localStorage.getItem('VERSION_CACHE'));
+    callback(null, result)
+  }
 }
 
 function generateBuildWindows(startNightly, endNightly) {
