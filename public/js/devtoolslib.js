@@ -521,7 +521,8 @@ function isInRange(range, start, end) {
   return false;
 }
 
-var ranges = [{
+var ranges = [
+  {
     start: 300,
     end: Infinity,
     desc: "More than 5 minutes."
@@ -531,6 +532,11 @@ var ranges = [{
     end:Infinity,
     desc: "More than 30 minutes"
   }
+  {
+    start: 30,
+    end: Infinity,
+    desc: "More than 30 seconds."
+  },
 ];
 
 if (typeof exports !== 'undefined' && typeof module.exports !== 'undefined') {
