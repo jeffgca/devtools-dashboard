@@ -91,43 +91,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 
-  // self.getUsageGraph = function(version, name, callback) {
-  //   self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
-  //     var results = {
-  //       yes: 0,
-  //       no: 0,
-  //       total: 0
-  //     };
-  //     var _i = 0;
-  //     evolution.each(function(date, histogram, index) {
-  //       _i++;
-  //       histogram.each(function(count, start, end, index) {
-  //         if (index === 0) {
-  //           results.no += count;
-  //           results.total += (count);
-  //         }
-  //         else if(index === 1) {
-  //           results.yes += count;
-  //           results.total += (count);
-  //         }
-  //       });
-  //     });
-
-  //     var sorted = {};
-  //     debugger;
-  //     _.each(results, function(weeks, key) {
-  //       var _sorted = _.sortBy(weeks, function(week, strDate) {
-
-  //         var i = moment(strDate, 'MM/DD/YYYY').unix();
-  //         console.log(i);
-  //         return i;
-  //       });
-  //       sorted[key] = _sorted;
-  //     });
-  //     callback(sorted);
-  //   });
-  // };
-
   self.getUsageGraph = function(version, name, callback) {
     self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
       var results = {

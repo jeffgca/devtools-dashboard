@@ -6,6 +6,7 @@ function cap(str) {
   return str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+// XXX switch to DevtoolsTelemetry.ToolMap
 var tools = {
   'Toolbox':            'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
   'Inspector':          'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',
@@ -27,7 +28,6 @@ var tools = {
 };
 
 $(function() {
-
   $('#reload-btn').click(function() {
     fetch(render);
   });
@@ -42,10 +42,11 @@ function fetch(callback) {
     $('#about-container').toggle();
   });
 
+  // XXX switch to getCurrentVersions()
   var channels = {
-    'beta'    : 36,
-    'aurora'  : 37,
-    'nightly' : 38,
+    'beta'    : 37,
+    'aurora'  : 38,
+    'nightly' : 39
   };
 
   // var pair_channels = _.pairs(channels);
@@ -78,7 +79,6 @@ function fetch(callback) {
 
 function render(data) {
   var categories = _.pluck(data[0].data, 'label');
-  console.log(categories);
   var series = [];
 
   _.each(data, function(channel) {
