@@ -7,6 +7,5 @@ var main = function(callback) {
       var windows = generateBuildWindows(32, _.last(nightlyVersions));
       dd.getWeeklyChannelUsage(windows, 'Toolbox', callback);
     });
-
   });
 };

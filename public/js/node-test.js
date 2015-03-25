@@ -1,1 +1,0 @@
-var DevtoolsTelemetry = require('./devtoolslib').DevtoolsTelemetry;

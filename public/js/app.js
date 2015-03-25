@@ -26,36 +26,6 @@ var tools = {
   'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG'
 };
 
-function fetchChannel(targetVersion, channel, finish) {
-  Telemetry.init(function() {
-    var devtoolsData = new DevtoolsTelemetry(Telemetry);
-    var totals = [];
-    var _i = 0, limit = (_.size(tools));
-    _.each(tools, function(tool, label) {      
-      var _version = channel+'/'+targetVersion;
-      devtoolsData.getUsageGraph(_version, tool, function(err, result) {
-        _i++;
-        var _r = {
-          // tool: tool,
-          label: label,
-          yes: result.yes,
-          no: result.no,
-          total: result.total,
-          version: targetVersion
-        };
-        
-        totals.push(_r);
-        // console.log(_i, limit);
-        if (_i === limit) {
-          // sum up totals for each channels / tool combination
-
-          finish(_.sortBy(totals, "yes").reverse());
-        }
-      });
-    });
-  });
-}
-
 $(function() {
 
   $('#reload-btn').click(function() {
@@ -88,17 +58,21 @@ function fetch(callback) {
   var r = [], _i = 0;
   var chart_columns = [];
 
-  var functions = _.map(channels, function(version, channel) {
-    return function(callback) {
-      fetchChannel(version, channel, function(data) {
-        callback(null, {channel: channel + ' '+version, data: data});
-      });
-    };
-  });
+  var dd = new DevtoolsTelemetry(Telemetry);
 
-  async.parallel(functions, function(err, results) {
-    if (err) throw err;
-    callback(results);
+  dd.init(function() {
+    var functions = _.map(channels, function(version, channel) {
+      return function(callback) {
+        dd.fetchChannel(version, channel, function(data) {
+          callback(null, {channel: channel + ' '+version, data: data});
+        });
+      };
+    });
+
+    async.parallel(functions, function(err, results) {
+      if (err) throw err;
+      callback(results);
+    });
   });
 }
 
@@ -108,6 +82,7 @@ function render(data) {
   var series = [];
 
   _.each(data, function(channel) {
+    // console.log(channel);
     _tool = {name: channel.channel};
     _tool.data = _.pluck(channel.data, 'yes');
     series.push(_tool);

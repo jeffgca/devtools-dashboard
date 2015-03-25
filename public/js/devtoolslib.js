@@ -91,7 +91,44 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     });
   };
 
-  self.getUsageGraph = function(version, name) {
+  // self.getUsageGraph = function(version, name, callback) {
+  //   self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
+  //     var results = {
+  //       yes: 0,
+  //       no: 0,
+  //       total: 0
+  //     };
+  //     var _i = 0;
+  //     evolution.each(function(date, histogram, index) {
+  //       _i++;
+  //       histogram.each(function(count, start, end, index) {
+  //         if (index === 0) {
+  //           results.no += count;
+  //           results.total += (count);
+  //         }
+  //         else if(index === 1) {
+  //           results.yes += count;
+  //           results.total += (count);
+  //         }
+  //       });
+  //     });
+
+  //     var sorted = {};
+  //     debugger;
+  //     _.each(results, function(weeks, key) {
+  //       var _sorted = _.sortBy(weeks, function(week, strDate) {
+
+  //         var i = moment(strDate, 'MM/DD/YYYY').unix();
+  //         console.log(i);
+  //         return i;
+  //       });
+  //       sorted[key] = _sorted;
+  //     });
+  //     callback(sorted);
+  //   });
+  // };
+
+  self.getUsageGraph = function(version, name, callback) {
     self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
       var results = {
         yes: 0,
@@ -105,28 +142,19 @@ var DevtoolsTelemetry = function(telemetryInstance) {
         histogram.each(function(count, start, end, index) {
           if (index === 0) {
             results.no += count;
-            results.total += (count);
+            results.total += (count)
           }
           else if(index === 1) {
-            results.yes += count;
-            results.total += (count);
+            results.yes += count
+            results.total += (count)
           }
         });
-      });
 
-      var sorted = {};
-      _.each(results, function(weeks, key) {
-        var _sorted = _.sortBy(weeks, function(week, strDate) {
-
-          var i = moment(strDate, 'MM/DD/YYYY').unix();
-          console.log(i);
-          return i;
-        });
-        sorted[key] = _sorted;
       });
-      callback(sorted);
+      callback(null, results);
     });
   };
+
 
   function isInRange(range, start, end) {
     if (start >= range.start && end <= range.end) {
@@ -474,6 +502,31 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       callback(sorted);
     });
   };
+
+  self.fetchChannel = function(targetVersion, channel, finish) {
+    var totals = [];
+    var _i = 0, limit = (_.size(tools));
+    _.each(tools, function(tool, label) {      
+      var _version = channel+'/'+targetVersion;
+      self.getUsageGraph(_version, tool, function(err, result) {
+        // console.log([].slice.call(arguments));
+        if (err) throw err;
+        _i++;
+        var _r = {
+          // tool: tool,
+          label: label,
+          yes: result.yes,
+          no: result.no,
+          total: result.total,
+          version: targetVersion
+        };
+        totals.push(_r);
+        if (_i === limit) {
+          finish(_.sortBy(totals, "yes").reverse());
+        }
+      });
+    });
+  };
 };
 
 var VERSION_CACHE, LASTFETCHED;
@@ -489,9 +542,8 @@ function getCurrentVersions(callback) {
     });
   }
   else {
-    console.log("hit cache");
     var result = JSON.parse(localStorage.getItem('VERSION_CACHE'));
-    callback(null, result)
+    callback(null, result);
   }
 }
 
