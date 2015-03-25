@@ -531,7 +531,7 @@ var ranges = [
     start:1800,
     end:Infinity,
     desc: "More than 30 minutes"
-  }
+  },
   {
     start: 30,
     end: Infinity,
