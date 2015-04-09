@@ -56,7 +56,6 @@ var fetcher = function(tool) {
   $('#loader').show();
 
   $.getJSON('data/toolbox-channels.json', function(json) {
-    console.log("fetched data", json);
     render('Weeks', 'Sessions', json.results);
     var date = new Date(json.timestamp);
     $('#date-collected > span').html(date);

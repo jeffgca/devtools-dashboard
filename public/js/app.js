@@ -44,9 +44,9 @@ function fetch(callback) {
 
   // XXX switch to getCurrentVersions()
   var channels = {
-    'beta'    : 37,
-    'aurora'  : 38,
-    'nightly' : 39
+    'beta'    : 38,
+    'aurora'  : 39,
+    'nightly' : 40
   };
 
   // var pair_channels = _.pairs(channels);

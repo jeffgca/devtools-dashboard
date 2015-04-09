@@ -395,7 +395,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   };
 
   self.getWeeklyChannelUsage = function(windows, toolName, callback) {
-    
     var functions = self._getFunctionsFromWindows(windows, toolName);
 
 
