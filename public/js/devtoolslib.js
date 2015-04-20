@@ -128,7 +128,9 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
   self.Toolmap = {
     'Toolbox': {
-      'time': 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS'
+      'flag': 'DEVTOOLS_TOOLBOX_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_TOOLBOX_TIME_ACTIVE_SECONDS',
+      'bool': 'DEVTOOLS_TOOLBOX_OPENED_BOOLEAN'
     },
     'Inspector': {
       'flag': 'DEVTOOLS_INSPECTOR_OPENED_PER_USER_FLAG',

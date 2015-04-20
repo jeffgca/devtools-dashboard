@@ -24,10 +24,32 @@ var DROPDOWN_RENDERED,
   DEFAULT_TOOL = 'Toolbox',
   CURRENT_TOOL;
 
+getCurrentVersions(function(err, result) {
+  if (err) throw err;
+  console.log("versions", result);
+});
+
+var dd;
+
+function fetchForTool(tool, callback) {
+  Telemetry.loadEvolutionOverTime('aurora/39', dd.Toolmap[tool].bool, function(histogramEvolution) {
+    var results = histogramEvolution.map(function (date, histogram) {
+      var _count = 0;
+      histogram.each(function (count, start, end, index) {
+        if (start === 1) {
+          _count += count;
+        }
+      });
+      return {channel: channel.name, date: date, count: _count, version: version};
+    });
+    callback(null, results);
+  });
+}
+
 
 function fetchChannelActivity(tool, finish) {
-  var start = 32, // the version we started to collect Beta data
-      dd = new DevtoolsTelemetry(Telemetry);
+  var start = 38;
+  dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
     if (!DROPDOWN_RENDERED) {
@@ -38,9 +60,10 @@ function fetchChannelActivity(tool, finish) {
       });
     }
 
-    $('')
+    // $('')
 
     dd.getVersionRange(function(err, nightlyVersions) {
+      console.log(nightlyVersions);
       if (err) throw err;
       var windows = generateBuildWindows(start, _.last(nightlyVersions));
       var _channelNames = _.keys(_.last((windows)));
@@ -50,6 +73,7 @@ function fetchChannelActivity(tool, finish) {
       });
 
       var outer = _.map(channels, function(channel) {
+        console.log("versions", channel.versions);
         var functions = _.map(channel.versions, function(version) {
           return function(callback) {
             Telemetry.loadEvolutionOverTime(version, dd.Toolmap[tool].bool, function(histogramEvolution) {
@@ -60,9 +84,8 @@ function fetchChannelActivity(tool, finish) {
                     _count += count;
                   }
                 });
-                return {channel: channel.name, date: date, count: _count, version: version, submissions: histogram.submissions()};
+                return {channel: channel.name, date: date, count: _count, version: version};
               });
-              console.table(results)
               callback(null, results);
             });
           }
@@ -76,6 +99,13 @@ function fetchChannelActivity(tool, finish) {
       }));
 
       async.parallel(functions, function(err, results) {
+        results = _.map(results, function(result) {
+          return _.filter(result, function(count) {
+            if (count.count > 10) {
+              return true;
+            }
+          });
+        });
         finish(results);
       });
     }); // get the latest nightly version

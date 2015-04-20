@@ -24,7 +24,8 @@ var tools = {
   'Profiler':           'DEVTOOLS_JSPROFILER_OPENED_PER_USER_FLAG',
   'Paint Flashing':     'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG',
   'Developer Toolbar':  'DEVTOOLS_DEVELOPERTOOLBAR_OPENED_PER_USER_FLAG',
-  'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG'
+  'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG',
+  'Storage Inspector':  'DEVTOOLS_STORAGE_OPENED_BOOLEAN'
 };
 
 $(function() {
@@ -43,11 +44,17 @@ function fetch(callback) {
   });
 
   // XXX switch to getCurrentVersions()
+  // var channels = {
+  //   'beta'    : 38,
+  //   'aurora'  : 39,
+  //   'nightly' : 40
+  // };
+
   var channels = {
-    'beta'    : 38,
-    'aurora'  : 39,
-    'nightly' : 40
-  };
+    'beta'    : 37,
+    'aurora'  : 38,
+    'nightly' : 39
+  };  
 
   // var pair_channels = _.pairs(channels);
 

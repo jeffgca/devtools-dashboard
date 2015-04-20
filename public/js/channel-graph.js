@@ -69,12 +69,14 @@ $(function() {
   //   $('#about-container').toggle();
   // });
 
+  var SELECTED_TOOL = 'Inspector';
+
   $('#reload-btn').click(function(ev) {
     ev.preventDefault();
     $('#loader').show();
     $('#graph-container').html("");
-    fetcher('Toolbox');
+    fetcher(SELECTED_TOOL);
   });
 
-  fetcher('Toolbox');
+  fetcher(SELECTED_TOOL);
 });
