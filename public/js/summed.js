@@ -20,16 +20,21 @@ var tools = {
 // }
 
 function fetchToolboxUsage(finish) {
-  var start = 32, // the version we started to collect Beta data
+  var start = 35, // the version we started to collect Beta data
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
     dd.getVersionRange(function(err, nightlyVersions) {
-      var windows = generateBuildWindows(start, _.last(nightlyVersions));  
+      // console.log("nightlyVersions>", nightlyVersions);
+      var windows = generateBuildWindows(start, _.last(nightlyVersions));
+      console.log("windows>", windows);
       var _channelNames = _.keys(_.last((windows)));
+      _channelNames = [ "aurora", "beta", "release" ];
       var channels  = _.map(_channelNames, function(name) {
         return {name: name, versions: _.compact(_.pluck(windows, name))};
       });
+
+      console.log("channels>", channels);
 
       // dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
       // debugger;

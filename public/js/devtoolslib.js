@@ -522,9 +522,9 @@ function generateBuildWindows(startNightly, endNightly) {
     if (a >= startNightly) {
       out.aurora = 'aurora/'+a;
     }
-    // if (r >= startNightly) {
-    //   out['release'] = 'release/'+r
-    // }
+    if (r >= startNightly) {
+      out['release'] = 'release/'+r
+    }
     return out;
   });
   return versions;

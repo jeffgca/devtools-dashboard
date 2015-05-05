@@ -26,7 +26,7 @@ var DROPDOWN_RENDERED,
 
 
 function fetchChannelActivity(tool, finish) {
-  var start = 32, // the version we started to collect Beta data
+  var start = 35, // the first version of Dev Edition
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
@@ -38,13 +38,15 @@ function fetchChannelActivity(tool, finish) {
       });
     }
 
-    $('')
+    // $('')
 
     dd.getVersionRange(function(err, nightlyVersions) {
       if (err) throw err;
       var windows = generateBuildWindows(start, _.last(nightlyVersions));
-      var _channelNames = _.keys(_.last((windows)));
-      _channelNames = [ "aurora" ];
+      // var _channelNames = _.keys(_.last((windows)));
+      // _channelNames = [ "aurora" ];
+      var _channelNames = [ "aurora", "beta" ];
+      // _channelNames = [ "aurora", "beta", "release" ];
       var channels  = _.map(_channelNames, function(name) {
         return {name: name, versions: _.compact(_.pluck(windows, name))};
       });
@@ -62,7 +64,6 @@ function fetchChannelActivity(tool, finish) {
                 });
                 return {channel: channel.name, date: date, count: _count, version: version, submissions: histogram.submissions()};
               });
-              console.table(results)
               callback(null, results);
             });
           }
@@ -78,18 +79,9 @@ function fetchChannelActivity(tool, finish) {
       async.parallel(functions, function(err, results) {
         finish(results);
       });
-    }); // get the latest nightly version
+    });
   });
 }
-
-$(function() {
-
-  // $('#reload-btn').click(function() {
-  //   fetch(CURRENT_TOOL, render);
-  // });
-
-  fetch(DEFAULT_TOOL, render);
-});
 
 function fetch(id, callback) {
   $('#about-toggle').click(function(e) {
@@ -168,3 +160,12 @@ function render(data) {
 
   $('#graph-container').highcharts(graph);
 }
+
+$(function() {
+
+  // $('#reload-btn').click(function() {
+  //   fetch(CURRENT_TOOL, render);
+  // });
+
+  fetch(DEFAULT_TOOL, render);
+});
