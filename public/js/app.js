@@ -124,7 +124,6 @@ function render(data) {
 
   _.each(values, (val) => {
     _.each(val, function(v, k) {
-      console.log(k, v)
       out[k].data.push(v);
     });
   });
