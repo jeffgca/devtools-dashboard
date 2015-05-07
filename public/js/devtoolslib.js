@@ -181,6 +181,11 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       'flag': 'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG',
       'time': 'DEVTOOLS_SCRATCHPAD_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_SCRATCHPAD_OPENED_BOOLEAN'
+    },
+    'WebIDE': {
+      'flag': 'DEVTOOLS_WEBIDE_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_WEBIDE_TIME_ACTIVE_SECONDS',
+      'bool': 'DEVTOOLS_WEBIDE_OPENED_BOOLEAN'
     }
   };
 
@@ -473,7 +478,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     _.each(tools, function(tool, label) {      
       var _version = channel+'/'+targetVersion;
       self.getUsageGraph(_version, tool, function(err, result) {
-        // console.log([].slice.call(arguments));
         if (err) throw err;
         _i++;
         var _r = {
