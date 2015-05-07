@@ -25,7 +25,7 @@ var tools = {
   'Paint Flashing':     'DEVTOOLS_PAINTFLASHING_OPENED_PER_USER_FLAG',
   'Developer Toolbar':  'DEVTOOLS_DEVELOPERTOOLBAR_OPENED_PER_USER_FLAG',
   'Scratchpad':         'DEVTOOLS_SCRATCHPAD_OPENED_PER_USER_FLAG',
-  'Storage Inspector':  'DEVTOOLS_STORAGE_OPENED_BOOLEAN'
+  'Storage Inspector':  'DEVTOOLS_STORAGE_OPENED_PER_USER_FLAG'
 };
 
 $(function() {
@@ -72,6 +72,7 @@ function fetch(callback) {
     var functions = _.map(channels, function(version, channel) {
       return function(callback) {
         dd.fetchChannel(version, channel, function(data) {
+          // console.table(data);
           callback(null, {channel: channel + ' '+version, data: data});
         });
       };
@@ -79,21 +80,56 @@ function fetch(callback) {
 
     async.parallel(functions, function(err, results) {
       if (err) throw err;
-      callback(results);
+      // console.table(results[1].data);
+
+      // sort-o-rama
+      var tools = _.pluck(results[0].data, 'label');
+
+      // console.table(tools);
+
+      var _sorted = {};
+
+      _.each(results, function(result) {
+        _.each(result.data, function(row) {
+          if (!_sorted[row.label]) {
+            var tool = {};
+            tool[result.channel] = row.yes;
+            _sorted[row.label] = tool;
+          }
+          else {
+            _sorted[row.label][result.channel] = row.yes
+          }
+        });
+      });
+
+      callback(_sorted);
     });
   });
 }
 
 function render(data) {
-  var categories = _.pluck(data[0].data, 'label');
-  var series = [];
+  console.table(data); // keeping this because it's kinda useful
+  var tools = _.keys(data);
+  var values = _.values(data);
+  var versions = _.keys(values[0]);
 
-  _.each(data, function(channel) {
-    // console.log(channel);
-    _tool = {name: channel.channel};
-    _tool.data = _.pluck(channel.data, 'yes');
-    series.push(_tool);
+
+  var out = {};
+
+  _.each(versions, (version) => {
+    if (!out[version]) {
+      out[version] = {name: version, data: []};
+    }
   });
+
+  _.each(values, (val) => {
+    _.each(val, function(v, k) {
+      console.log(k, v)
+      out[k].data.push(v);
+    });
+  });
+
+  var series = _.values(out);
 
   var graph = {
       chart: {
@@ -104,7 +140,7 @@ function render(data) {
           text: 'Tool usage'
       },
       xAxis: {
-          categories: categories
+          categories: tools
       },
       yAxis: {
           title: {
@@ -126,3 +162,13 @@ function render(data) {
   };
   $('#graph-container').highcharts(graph);
 }
+
+function renderTable(data, id) {
+  var tbl = _.map(data, function(row) {
+    return `    <li>${row.label} - ${row.yes}</li>`;
+  }).join("\n");
+
+  $('#'+id).html(`<ul>${tbl}</ul>`);
+}
+
+
