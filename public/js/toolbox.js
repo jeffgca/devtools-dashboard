@@ -15,7 +15,6 @@
 // var keys = _.template(key_tpl, {versions: versions})+'</tr>';
 
 // $('#keys').html(keys);
-var versions = [27,28,29,30];
 
 var gResults;
 

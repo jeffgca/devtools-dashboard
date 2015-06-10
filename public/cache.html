@@ -5,31 +5,28 @@
 <title>Telemetry Shell</title>
 </head>
 <body>
-
+<script src="http://telemetry.mozilla.org/v1/big.js"></script>
+<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
 <script src="js/jquery-2.1.1.js"></script>
 <script src="js/underscore-min.js"></script>
 <script src="js/async.js"></script>
 <script src="js/moment-with-langs.min.js"></script>
 <script src="js/moment-range.js"></script>
 <script src="js/devtoolslib.js"></script>
-<script src="http://telemetry.mozilla.org/v1/big.js"></script>
-<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
 <script>
-// var main = function(callback) {
-//   var start = 24,
-//       dd = new DevtoolsTelemetry(Telemetry);
+var main = function(callback) {
+  var start = 34,
+      dd = new DevtoolsTelemetry(Telemetry);
 
-//   dd.init(function() {
-//     console.log(dd);
+  dd.init(function() {
+    var windows = generateBuildWindows(34, 41)
+    dd.getWeeklyChannelUsage(windows, 'Toolbox', callback);
+  });
+};
 
-//     var windows = generateBuildWindows(32, 39)
-//     dd.getWeeklyChannelUsage(windows, 'Toolbox', callback);
-//   });
-// };
-
-// main((result) => {
-//   console.log(arguments);
-// })
+main((result) => {
+  console.log(arguments);
+})
 
 </script>
 </body>

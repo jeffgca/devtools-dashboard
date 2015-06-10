@@ -11,7 +11,7 @@ var tools = {
 };
 
 function fetchToolboxUsage(finish) {
-  var start = 32, // the version we started to collect Beta data
+  var start = 35, // the version we started to collect Beta data
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
@@ -20,7 +20,8 @@ function fetchToolboxUsage(finish) {
 
       // console.log(windows);
 
-      var _channelNames = _.keys(_.last((windows)));
+      // var _channelNames = _.keys(_.last((windows)));
+      var _channelNames = [ "beta", "nightly", "aurora"];
       var channels  = _.map(_channelNames, function(name) {
         return {name: name, versions: _.compact(_.pluck(windows, name))};
       });

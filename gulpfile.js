@@ -2,7 +2,7 @@
 
 To install node dependencies:
 
-npm install --save gulp gulp-livereload serve-static connect
+npm install --save-dev gulp gulp-util gulp-livereload serve-static connect
 
 To use liveReload, add this to your page:
 
@@ -15,6 +15,7 @@ var path = require('path');
 var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     dest = './public';
+var gutil = require('gulp-util');
 
 var git = require('gulp-git');
 
@@ -37,7 +38,7 @@ gulp.task('server', function(next) {
       server = connect();
   var _port = process.env.PORT || 8080;
   server.use(connect.static(dest)).listen(_port, function() {
-    console.log(">>> listening on port "+_port);
+    gutil.log("Listening on port", _port);
     next();
   });
 });

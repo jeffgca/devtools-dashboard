@@ -62,7 +62,7 @@ if (!module.parent) {
   scraper(pageUrl, 'public', 8090, function(results) {
     mkdirp(path.dirname(dataFile), function(e, r) {
       if (e) throw e;
-      var out = {results: results, timestamp: Date.now()};
+      var out = {results: results, timestamp: Date.now(), time: new Date().toString()};
       fs.writeFile(dataFile, JSON.stringify(out), function(err, result) {
         if (err) console.log(err);
         console.log("Wrote file? " + dataFile);

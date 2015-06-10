@@ -421,7 +421,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       var graph = {};
       // console.log();
       var tplObject = _.object(['beta', 'aurora', 'nightly'], [{}, {}, {}]);
-      console.log(tplObject);
       var mapped = {};
 
       // console.log(dateGroups);
@@ -497,22 +496,11 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   };
 };
 
-var VERSION_CACHE, LASTFETCHED;
-var ONE_DAY = (1000 * 60 * 60 * 24);
 function getCurrentVersions(callback) {
-  LASTFETCHED = localStorage.getItem('LASTFETCHED');
-  if (LASTFETCHED+ONE_DAY < Date.now()) {
-    $.getJSON('http://fxver.paas.canuckistani.ca/', function(result) {
-      console.log("result", result);
-      localStorage.setItem('VERSION_CACHE', JSON.stringify(result));
-      localStorage.setItem('LASTFETCHED', Date.now());
-      callback(null, result);
-    });
-  }
-  else {
-    var result = JSON.parse(localStorage.getItem('VERSION_CACHE'));
+  $.getJSON('http://fxver.paas.canuckistani.ca/', function(result) {
+    console.log("getCurrentVersions>", result);
     callback(null, result);
-  }
+  });
 }
 
 function generateBuildWindows(startNightly, endNightly) {

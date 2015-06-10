@@ -38,14 +38,12 @@ function fetchChannelActivity(tool, finish) {
       });
     }
 
-    // $('')
-
     dd.getVersionRange(function(err, nightlyVersions) {
       if (err) throw err;
       var windows = generateBuildWindows(start, _.last(nightlyVersions));
-      var _channelNames = _.keys(_.last((windows)));
+      // var _channelNames = _.keys(_.last((windows)));
       // _channelNames = [ "aurora" ];
-      // var _channelNames = [ "aurora", "beta" ];
+      var _channelNames = [ "aurora", "beta" ];
       // _channelNames = [ "aurora", "beta", "release" ];
       var channels  = _.map(_channelNames, function(name) {
         return {name: name, versions: _.compact(_.pluck(windows, name))};

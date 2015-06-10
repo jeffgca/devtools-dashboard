@@ -27,9 +27,9 @@ function fetchToolboxUsage(finish) {
     dd.getVersionRange(function(err, nightlyVersions) {
       // console.log("nightlyVersions>", nightlyVersions);
       var windows = generateBuildWindows(start, _.last(nightlyVersions));
-      console.log("windows>", windows);
+      // console.log("windows>", windows);
       var _channelNames = _.keys(_.last((windows)));
-      _channelNames = [ "aurora", "beta", "release" ];
+      _channelNames = [ "nightly", "aurora", "beta" ];
       var channels  = _.map(_channelNames, function(name) {
         return {name: name, versions: _.compact(_.pluck(windows, name))};
       });

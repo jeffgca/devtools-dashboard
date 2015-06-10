@@ -17,8 +17,9 @@
     "underscore": "*"
   },
   "devDependencies": {
+    "connect": "^2.15.0",
     "gulp": "^3.6.2",
     "gulp-livereload": "^1.5.0",
-    "connect": "^2.15.0"
+    "gulp-util": "^3.0.5"
   }
 }
