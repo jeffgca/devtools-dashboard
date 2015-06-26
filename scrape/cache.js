@@ -1,79 +1,72 @@
-var phantom = require('phantom'),
-    fs = require('fs'),
-    path = require('path'),
-    connect = require('connect'),
-    mkdirp = require('mkdirp');
+#!/usr/bin/env node
 
-// /usr/local/bin/dokku run devtools-dash node scrape/cache.js -o toolbox-channels.json -s cache-channels.js
-var defaultDataFile = 'toolbox-channels.json',
-  defaultShell = 'cache-channels.js';
+var optimist = require('optimist');
+var fs = require('fs');
+var argv = optimist
+    .usage('Usage: node ./bin/cli <command>')
+    .argv;
 
-var optimist = require('optimist'), argv = optimist
-  .usage('Query and analyze telemetry data.\nUsage: $0 -o outputfile -s shellfile')
-  .default('o', defaultDataFile)
-  .alias('o', 'output')
-  .describe('o', 'JSON data file name\n       ( stored to ./public/data/$file )')
-  .default('s', defaultShell)
-  .alias('s', 'shell')
-  .describe('s', 'Which JS script to inject into the shell\n      ( found in ./public/js/$file )')
-  .alias('h', 'help')
-  .argv;
+var DevtoolsTelemetry = require('devtools-telemetry').DevtoolsTelemetry;
+var targetFile = './public/data/toolbox-channels.json';
+var dd = new DevtoolsTelemetry();
+var _ = require('underscore');
+var request = require('request');
 
-if (argv.h) {
-  optimist.showHelp();
-  process.exit();
+request.get('http://fxver.paas.canuckistani.ca/', function(e, r, b) {
+  if (e) throw e;
+  // console.log("erb>", e, r, b);
+  console.log("body>", JSON.parse(b));
+});
+
+function getWindows(callback) {
+  request.get('http://fxver.paas.canuckistani.ca/', function(e, r, b) {
+    if (e) throw e;
+    var _ver = JSON.parse(b);
+    // console.log("recent", parseInt(_ver.nightly));
+    var windows = dd.generateBuildWindows(35, parseInt(_ver.nightly));
+    dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
+  });
 }
 
-var dataFile = path.join(__dirname, '../public/', 'data', argv.output);
-var shellPath = path.join(__dirname, 'public', 'js', argv.shell);
-var pageUrl = 'http://localhost:8090/cache.html';
-
-var scraper = function(url, dir, port, callback) {
-  var server = connect();
-  server.use(connect.static(dir)).listen(port, function() {
-    phantom.create(function (ph) {
-      ph.createPage(function (page) {
-        page.set('onLoadFinished', function(success) {
+function main(command, callback) {
+  dd.init(function() {
+    switch(command) {
+      case 'weekly':
+        request.get('http://fxver.paas.canuckistani.ca/', function(e, r, b) {
+          if (e) throw e;
+          var _ver = JSON.parse(b);
+          // console.log("recent", parseInt(_ver.nightly));
+          var windows = dd.generateBuildWindows(35, parseInt(_ver.aurora));
+          dd.getWeeklyToolUsage(windows, 'Toolbox', callback);
         });
-
-        page.set('onCallback', function(results) {
-          ph.exit();
-          callback(results);
-        });
-
-        page.open(pageUrl, function (status) {
-          page.includeJs('./js/'+argv.shell, function() {
-            page.evaluate(function() {
-              window.phantomLoaded = true;
-              window.main(function(results) {
-                if (typeof window.callPhantom === 'function') {
-                  window.callPhantom(results);
-                }
-              });
-            });
-          });
-        });
-      });
-    });
+        break;
+      default:
+        break;
+    }
   });
-};
+}
 
 if (!module.parent) {
-  scraper(pageUrl, 'public', 8090, function(results) {
-    mkdirp(path.dirname(dataFile), function(e, r) {
-      if (e) throw e;
-      var out = {results: results, timestamp: Date.now(), time: new Date().toString()};
-      fs.writeFile(dataFile, JSON.stringify(out), function(err, result) {
-        if (err) console.log(err);
-        console.log("Wrote file? " + dataFile);
-        process.exit();
+  if (argv._.length === 0) {
+    optimist.usage();
+    process.exit();
+  }
+  else {
+    var command = argv._.shift();
+    main(command, function(results) {
+      if (!results || _.keys(results).length === 0) {
+        throw "Invalid / bad data?\n"+JSON.stringify(results);
+      }
+
+      var output = JSON.stringify({
+        results: results,
+        timestamp: Date.now()
+      });
+
+      fs.writeFile(targetFile, output, function(err) {
+        if (err) throw err;
+        console.log("Write file", targetFile);
       });
     });
-  });
+  }
 }
-
-module.exports = {
-  scraper: scraper,
-  pageUrl: pageUrl,
-  dataFile: dataFile
-};
