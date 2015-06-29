@@ -186,6 +186,21 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       'flag': 'DEVTOOLS_WEBIDE_OPENED_PER_USER_FLAG',
       'time': 'DEVTOOLS_WEBIDE_TIME_ACTIVE_SECONDS',
       'bool': 'DEVTOOLS_WEBIDE_OPENED_BOOLEAN'
+    },
+    'Shader': {
+      'flag': 'DEVTOOLS_SHADEREDITOR_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_SHADEREDITOR_TIME_ACTIVE_SECONDS',
+      'bool': 'DEVTOOLS_SHADEREDITOR_OPENED_BOOLEAN'
+    },
+    'WebAudio': {
+      'flag': 'DEVTOOLS_WEBAUDIOEDITOR_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_WEBAUDIOEDITOR_TIME_ACTIVE_SECONDS',
+      'bool': 'DEVTOOLS_WEBAUDIOEDITOR_OPENED_BOOLEAN'
+    },
+    'Canvas': {
+      'flag': 'DEVTOOLS_CANVASDEBUGGER_OPENED_PER_USER_FLAG',
+      'time': 'DEVTOOLS_CANVASDEBUGGER_TIME_ACTIVE_SECONDS',
+      'bool': 'DEVTOOLS_CANVASDEBUGGER_OPENED_BOOLEAN'
     }
   };
 
@@ -498,7 +513,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
 function getCurrentVersions(callback) {
   $.getJSON('http://fxver.paas.canuckistani.ca/', function(result) {
-    console.log("getCurrentVersions>", result);
+    // console.log("getCurrentVersions>", result);
     callback(null, result);
   });
 }
