@@ -51,9 +51,9 @@ function fetch(callback) {
   // };
 
   var channels = {
-    'beta'    : 38,
-    'aurora'  : 39,
-    'nightly' : 40
+    'beta'    : 41,
+    'aurora'  : 42,
+    'nightly' : 43
   };
 
   // var pair_channels = _.pairs(channels);
@@ -169,5 +169,3 @@ function renderTable(data, id) {
 
   $('#'+id).html(`<ul>${tbl}</ul>`);
 }
-
-
