@@ -2,6 +2,9 @@ var start = 24, end;
 
 var render = function(xTitle, yTitle, data) {
 
+  data['Dev Edition'] = data.aurora;
+  delete data.aurora;
+
   var series = [];
 
   _.each(data, function(weeks, label) {

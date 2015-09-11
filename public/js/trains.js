@@ -11,7 +11,7 @@ var tools = {
 };
 
 function fetchToolboxUsage(finish) {
-  var start = 35, // the version we started to collect Beta data
+  var start = 40, // the version we started to collect Beta data
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
@@ -36,12 +36,13 @@ function fetchToolboxUsage(finish) {
       var outer = _.map(channels, function(channel) {
         var functions = _.map(channel.versions, function(version) {
           return function(callback) {
-            Telemetry.loadEvolutionOverTime(version, tools.Toolbox, function(histogramEvolution) {
-              var results = histogramEvolution.map(function (date, histogram) {
+            _split = version.split('/');
+            Telemetry.getEvolution(_split[0], _split[1], tools.Toolbox, [], true, function(histogramEvolution) {
+              var results = histogramEvolution[""].map(function (histogram, i, date) {
                 var _m = moment(date);
                 var shortDate = _m.format('YYYY/MM/DD');
                 var _count = 0;
-                histogram.each(function(count, start, end, index) {
+                histogram.map(function(count, start, end, index) {
                   if (start === 1) {
                     _count += count;
                   }

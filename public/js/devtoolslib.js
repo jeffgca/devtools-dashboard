@@ -18,7 +18,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
   self.init = function(callback) {
     self.telemetryInstance.init(function() {
-      self.versions = self.telemetryInstance.versions();
+      self.versions = self.telemetryInstance.getVersions('aurora/39', 'nightly/43');
       callback(true);
     });
   };
@@ -92,17 +92,17 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   };
 
   self.getUsageGraph = function(version, name, callback) {
-    self.telemetryInstance.loadEvolutionOverBuilds(version, name, function(evolution) {
+    var _split = version.split('/');
+    self.telemetryInstance.getEvolution(_split[0], _split[1], name, {}, true, function(evolution) {
       var results = {
         yes: 0,
         no: 0,
         total: 0
       };
       var _i = 0;
-      evolution.each(function(date, histogram, index) {
+      evolution[""].map(function(histogram, index, date) {
         _i++;
-
-        histogram.each(function(count, start, end, index) {
+        histogram.map(function(count, start, end, index) {
           if (index === 0) {
             results.no += count;
             results.total += (count)
@@ -112,7 +112,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
             results.total += (count)
           }
         });
-
       });
       callback(null, results);
     });
@@ -229,7 +228,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   self.getVersionRange = function(callback) {
     var telemetryVersions =  _.compact(_.unique(_.map(self.versions, function(v) {
       var _v = parseInt(v.split('/').pop(), 10);
-      if(/^[\d]+$/.test(_v) && _v >= 24) {
+      if(/^[\d]+$/.test(_v) && _v >= 39) {
         return _v;
       }
     }))).sort();
@@ -489,8 +488,9 @@ var DevtoolsTelemetry = function(telemetryInstance) {
   self.fetchChannel = function(targetVersion, channel, finish) {
     var totals = [];
     var _i = 0, limit = (_.size(tools));
-    _.each(tools, function(tool, label) {      
+    _.each(tools, function(tool, label) {
       var _version = channel+'/'+targetVersion;
+      console.log(_version);
       self.getUsageGraph(_version, tool, function(err, result) {
         if (err) throw err;
         _i++;

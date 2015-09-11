@@ -51,9 +51,9 @@ function fetch(callback) {
   // };
 
   var channels = {
-    'beta'    : 38,
-    'aurora'  : 39,
-    'nightly' : 40
+    'beta'    : 40,
+    'aurora'  : 41,
+    'nightly' : 42
   };
 
   // var pair_channels = _.pairs(channels);
@@ -69,10 +69,11 @@ function fetch(callback) {
   var dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
+    console.log(channels);
     var functions = _.map(channels, function(version, channel) {
       return function(callback) {
         dd.fetchChannel(version, channel, function(data) {
-          // console.table(data);
+          console.table(data);
           callback(null, {channel: channel + ' '+version, data: data});
         });
       };
@@ -108,7 +109,7 @@ function fetch(callback) {
 }
 
 function render(data) {
-  console.table(data); // keeping this because it's kinda useful
+  // console.table(data); // keeping this because it's kinda useful
   var tools = _.keys(data);
   var values = _.values(data);
   var versions = _.keys(values[0]);
@@ -169,5 +170,3 @@ function renderTable(data, id) {
 
   $('#'+id).html(`<ul>${tbl}</ul>`);
 }
-
-

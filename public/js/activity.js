@@ -16,17 +16,17 @@ function renderDropDown(id, items, callback) {
     console.log("ev", ev.target.id);
     $('#selected-Tool').html(ev.target.id);
     // CURRENT_TOOL = ev.target.id;
-    fetch(ev.target.id, render);
+    fetchData(ev.target.id, render);
   });
 }
 
-var DROPDOWN_RENDERED, 
+var DROPDOWN_RENDERED,
   DEFAULT_TOOL = 'Toolbox',
   CURRENT_TOOL;
 
 
 function fetchChannelActivity(tool, finish) {
-  var start = 35, // the first version of Dev Edition
+  var start = 39, // seems to be a version that has data in the new tlemetry infra
       dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
@@ -52,15 +52,16 @@ function fetchChannelActivity(tool, finish) {
       var outer = _.map(channels, function(channel) {
         var functions = _.map(channel.versions, function(version) {
           return function(callback) {
-            Telemetry.loadEvolutionOverTime(version, dd.Toolmap[tool].bool, function(histogramEvolution) {
-              var results = histogramEvolution.map(function (date, histogram) {
+            var _split = version.split('/');
+            Telemetry.getEvolution(_split[0], _split[1], dd.Toolmap[tool].bool, {}, true, function(histogramEvolution) {
+              var results = histogramEvolution[""].map(function (histogram, i, date) {
                 var _count = 0;
-                histogram.each(function (count, start, end, index) {
+                histogram.map(function (count, start, end, index) {
                   if (start === 1) {
                     _count += count;
                   }
                 });
-                return {channel: channel.name, date: date, count: _count, version: version, submissions: histogram.submissions()};
+                return {channel: channel.name, date: date, count: _count, version: version, submissions: histogram.submissions};
               });
               callback(null, results);
             });
@@ -81,7 +82,7 @@ function fetchChannelActivity(tool, finish) {
   });
 }
 
-function fetch(id, callback) {
+function fetchData(id, callback) {
   $('#about-toggle').click(function(e) {
     e.preventDefault();
     $('#about-container').toggle();
@@ -165,5 +166,5 @@ $(function() {
   //   fetch(CURRENT_TOOL, render);
   // });
 
-  fetch(DEFAULT_TOOL, render);
+  fetchData(DEFAULT_TOOL, render);
 });

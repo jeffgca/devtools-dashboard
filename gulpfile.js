@@ -1,4 +1,4 @@
-/** 
+/**
 
 To install node dependencies:
 
@@ -47,22 +47,6 @@ gulp.task('watch', ['server'], function() {
   var server = livereload();
   gulp.watch(dest + '/**').on('change', function(file) {
       server.changed(file.path);
-  });
-});
-
-gulp.task('scrape', function(cb) {
-  var cache = require('./scrape/cache');
-  mkdirp(path.dirname(cache.dataFile), function(e, r) {
-    if (e) throw e;
-    cache.scraper(cache.pageUrl, './public', '8090', function(results) {
-      fs.writeFile(cache.dataFile, results, function(err, result) {
-        if (err) {
-          cb(err);
-        }
-        cb(null);
-        process.exit();
-      });
-    });
   });
 });
 

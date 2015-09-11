@@ -5,8 +5,12 @@
 <title>Telemetry Shell</title>
 </head>
 <body>
-<script src="http://telemetry.mozilla.org/v1/big.js"></script>
-<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+
+<!-- Telmetry v2, plus shim -->
+<script src="https://raw.githubusercontent.com/Uberi/telemetry-dashboard/v1-shim/v2/telemetry.js"></script>
+<script src="https://raw.githubusercontent.com/Uberi/telemetry-dashboard/v1-shim/v2/v1-shim.js"></script>
+<script>Telemetry = new TelemetryShim(Telemetry);</script>
+
 <script src="js/jquery-2.1.1.js"></script>
 <script src="js/underscore-min.js"></script>
 <script src="js/async.js"></script>
@@ -15,4 +19,4 @@
 <script src="js/devtoolslib.js"></script>
 <script></script>
 </body>
-</html> 
+</html>

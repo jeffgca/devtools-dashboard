@@ -50,8 +50,12 @@
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <!-- moar scripts -->
 <script src="js/underscore-min.js"></script>
-<script src="http://telemetry.mozilla.org/v1/big.js"></script>
-<script src="http://telemetry.mozilla.org/v1/telemetry.js"></script>
+
+<!-- Telmetry v2, plus shim -->
+<script src="https://raw.githubusercontent.com/Uberi/telemetry-dashboard/v1-shim/v2/telemetry.js"></script>
+<!-- <script src="https://raw.githubusercontent.com/Uberi/telemetry-dashboard/v1-shim/v2/v1-shim.js"></script>
+<script>Telemetry = new TelemetryShim(Telemetry);</script> -->
+
 <script src="js/moment-with-langs.min.js"></script>
 <script src="js/moment-range.js"></script>
 <script src="js/promise-3.2.0.js"></script>
