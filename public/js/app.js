@@ -51,9 +51,9 @@ function fetch(callback) {
   // };
 
   var channels = {
-    'beta'    : 40,
-    'aurora'  : 41,
-    'nightly' : 42
+    'beta'    : 41,
+    'aurora'  : 42,
+    'nightly' : 43
   };
 
   // var pair_channels = _.pairs(channels);
