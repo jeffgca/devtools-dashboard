@@ -51,11 +51,10 @@ function fetch(callback) {
   // };
 
   var channels = {
-    'beta'    : 41,
-    'aurora'  : 42,
-    'nightly' : 43
+    'beta'    : 43,
+    'aurora'  : 44,
+    'nightly' : 45
   };
-
   // var pair_channels = _.pairs(channels);
 
   var chart_struct = {
@@ -69,11 +68,11 @@ function fetch(callback) {
   var dd = new DevtoolsTelemetry(Telemetry);
 
   dd.init(function() {
-    console.log(channels);
+    // console.log(channels);
     var functions = _.map(channels, function(version, channel) {
       return function(callback) {
         dd.fetchChannel(version, channel, function(data) {
-          console.table(data);
+          // console.table(data);
           callback(null, {channel: channel + ' '+version, data: data});
         });
       };
