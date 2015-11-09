@@ -18,7 +18,7 @@ var DevtoolsTelemetry = function(telemetryInstance) {
 
   self.init = function(callback) {
     self.telemetryInstance.init(function() {
-      self.versions = self.telemetryInstance.getVersions('aurora/39', 'nightly/43');
+      self.versions = self.telemetryInstance.getVersions('aurora/39', 'nightly/99');
       callback(true);
     });
   };
@@ -286,7 +286,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
       var flat_results = _.flatten(results);
       var dateGroups = {};
       var tplObject = _.object(_.pluck(ranges, 'desc'), [0, 0]);
-      console.log(flat_results.length);
       _.each(ranges, function(r) {
         _.each(flat_results, function(result) {
           if (isInRange(r, result.start, result.end) && result.count > 0) {
