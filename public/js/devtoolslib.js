@@ -489,7 +489,6 @@ var DevtoolsTelemetry = function(telemetryInstance) {
     var _i = 0, limit = (_.size(tools));
     _.each(tools, function(tool, label) {
       var _version = channel+'/'+targetVersion;
-      console.log(_version);
       self.getUsageGraph(_version, tool, function(err, result) {
         if (err) throw err;
         _i++;
